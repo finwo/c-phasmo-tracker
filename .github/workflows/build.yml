@@ -14,13 +14,13 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
-          - os: windows-latest
+          - cc: gcc
+          - cc: x86_64-w64-mingw32-gcc
+
     steps:
 
       - uses: finwo/dep@edge
         name: Install dep
-        shell: bash
 
       - uses: actions/checkout@v3
 
