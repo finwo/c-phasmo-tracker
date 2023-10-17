@@ -33,17 +33,17 @@ jobs:
       - uses: finwo/dep@main
         name: Install dep
 
-      - name: Install dependencies
-        run: dep install
+      # - name: Install dependencies
+      #   run: dep install
 
-      - name: Build
-        run: make CC=${{ matrix.cc }} BIN=${{ matrix.bin }}
+      # - name: Build
+      #   run: make CC=${{ matrix.cc }} BIN=${{ matrix.bin }}
 
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ matrix.bin }}
-          file_glob: true
-          overwrite: true
-          tag: ${{ github.ref }}
+      # - name: Upload binaries to release
+      #   uses: svenstaro/upload-release-action@v2
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: ${{ matrix.bin }}
+      #     file_glob: true
+      #     overwrite: true
+      #     tag: ${{ github.ref }}
