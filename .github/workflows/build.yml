@@ -18,8 +18,8 @@ jobs:
           - os: windows-latest
     steps:
 
-      - name: Set up chocolatey
-        uses: tyler887/chocolatey-install
+      - name: Install Chocolatey pkg
+        uses: Tyler887/chocolatey-install@1.0
         if: ${{ startsWith(matrix.os, 'windows-') }}
 
       - name: Install mingw
