@@ -17,10 +17,18 @@ jobs:
           - os: ubuntu-latest
           - os: windows-latest
     steps:
+
+      - name: Set up chocolatey
+        uses: tyler887/chocolatey-install
+        if: ${{ startsWith(matrix.os, 'windows-') }}
+
       - name: Set up MinGW
         uses: egor-tensin/setup-mingw@v2
+        if: ${{ startsWith(matrix.os, 'windows-') }}
         with:
           platform: x64
+
       - uses: actions/checkout@v3
+
       - name: test
         run: echo hello world
