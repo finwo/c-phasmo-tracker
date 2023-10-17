@@ -25,7 +25,7 @@ jobs:
 
       - name: Install cross-compiler
         if: ${{ matrix.cc == 'x86_64-w64-mingw32-gcc' }}
-        run: apt install -y gcc-mingw-w64
+        run: sudo apt install -y gcc-mingw-w64
 
       - uses: finwo/dep@edge
         name: Install dep
