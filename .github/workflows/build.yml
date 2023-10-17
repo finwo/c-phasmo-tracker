@@ -1,0 +1,22 @@
+---
+
+name: Build
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+
+  build-packages:
+    name: Attach packages to release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+          - os: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: test
+        run: echo hello world
