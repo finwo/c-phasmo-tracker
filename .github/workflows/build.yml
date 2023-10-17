@@ -3,21 +3,19 @@
 name: Build
 on:
   push:
-    tags:
-      - '*'
+    # tags:
+    #   - '*'
 
 jobs:
 
   build-packages:
     name: Build and upload artifact
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         include:
-          - cc: gcc
-            bin: phasmo-tracker
-          - cc: x86_64-w64-mingw32-gcc
-            bin: phasmo-tracker.exe
+          - os: ubuntu-latest
+          - os: windows-latest
 
     steps:
 
@@ -32,7 +30,7 @@ jobs:
         if: ${{ matrix.cc == 'x86_64-w64-mingw32-gcc' }}
         run: sudo apt install -y gcc-mingw-w64
 
-      - uses: finwo/dep@edge
+      - uses: finwo/dep@main
         name: Install dep
 
       - name: Install dependencies
