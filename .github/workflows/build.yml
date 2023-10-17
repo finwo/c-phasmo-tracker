@@ -9,20 +9,34 @@ on:
 jobs:
 
   build-packages:
-    name: Attach packages to release
+    name: Build and upload artifact
     runs-on: ubuntu-latest
     strategy:
       matrix:
         include:
           - cc: gcc
+            bin: phasmo-tracker
           - cc: x86_64-w64-mingw32-gcc
+            bin: phasmo-tracker.exe
 
     steps:
+
+      - uses: actions/checkout@v3
 
       - uses: finwo/dep@edge
         name: Install dep
 
-      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: dep install
 
-      - name: test
-        run: echo hello world
+      - name: Build
+        run: make CC=${{ matrix.cc }} BIN=${{ matrix.bin }}
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ matrix.bin }}
+          file_glob: true
+          overwrite: true
+          tag: ${{ github.ref }}
