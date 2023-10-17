@@ -35,6 +35,7 @@ jobs:
 
       - name: Install dependencies
         run: dep install
+        shell: bash
 
       # - name: Build
       #   run: make CC=${{ matrix.cc }} BIN=${{ matrix.bin }}
