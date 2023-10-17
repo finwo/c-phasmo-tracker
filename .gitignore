@@ -1,1 +1,4 @@
 /lib/
+/phasmo-tracker
+/phasmo-tracker.exe
+*.o

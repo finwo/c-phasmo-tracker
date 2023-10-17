@@ -21,4 +21,9 @@ default: $(BIN)
 $(OBJ): $(SRC)
 
 $(BIN): $(OBJ)
-	$(CC) $(LDFLAGS) $(OBJ) -o $@
+	$(CC) $(LDFLAGS) -s $(OBJ) -o $@
+
+.PHONY: clean
+clean:
+	rm -f $(BIN)
+	rm -f $(OBJ)
