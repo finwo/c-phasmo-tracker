@@ -10,7 +10,7 @@ jobs:
 
   build-packages:
     name: Attach packages to release
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         include:
