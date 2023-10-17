@@ -24,6 +24,9 @@ jobs:
           choco install mingw
           choco install make
 
+      - uses: finwo/dep@edge
+        name: Install dep (native)
+
       - uses: actions/checkout@v3
 
       - name: test
