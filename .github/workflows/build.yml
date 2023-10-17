@@ -18,9 +18,11 @@ jobs:
           - os: windows-latest
     steps:
 
-      - name: Install mingw
+      - name: Install mingw and make
         if: ${{ startsWith(matrix.os, 'windows-') }}
-        run: choco install mingw
+        run: |
+          choco install mingw
+          choco install make
 
       - uses: actions/checkout@v3
 
