@@ -22,11 +22,9 @@ jobs:
         uses: tyler887/chocolatey-install
         if: ${{ startsWith(matrix.os, 'windows-') }}
 
-      - name: Set up MinGW
-        uses: egor-tensin/setup-mingw@v2
+      - name: Install mingw
         if: ${{ startsWith(matrix.os, 'windows-') }}
-        with:
-          platform: x64
+        run: choco install mingw
 
       - uses: actions/checkout@v3
 
