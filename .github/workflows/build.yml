@@ -18,14 +18,9 @@ jobs:
           - os: windows-latest
     steps:
 
-      - name: Install mingw and make
-        if: ${{ startsWith(matrix.os, 'windows-') }}
-        run: |
-          choco install mingw
-          choco install make
-
       - uses: finwo/dep@edge
-        name: Install dep (native)
+        name: Install dep
+        shell: bash
 
       - uses: actions/checkout@v3
 
