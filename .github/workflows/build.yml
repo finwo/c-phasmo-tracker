@@ -25,7 +25,9 @@ jobs:
 
       - name: Install dependencies
         if: ${{ matrix.cc == 'x86_64-w64-mingw32-gcc' }}
-        run: sudo apt install -y libgtk-3-dev libwebkit2gtk-4.0-dev
+        run: |
+          sudo apt update
+          sudo apt install -y libgtk-3-dev libwebkit2gtk-4.0-dev
 
       - name: Install cross-compiler
         if: ${{ matrix.cc == 'x86_64-w64-mingw32-gcc' }}
