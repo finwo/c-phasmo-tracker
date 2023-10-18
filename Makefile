@@ -6,6 +6,9 @@ SRC+=$(wildcard src/*.c)
 
 INCLUDES:=
 
+CPPFLAGS:=
+CPPFLAGS+=`pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0 libiowow` -lstdc++
+
 override CFLAGS?=-Wall -s -O2
 
 include lib/.dep/config.mk
