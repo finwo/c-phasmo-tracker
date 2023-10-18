@@ -18,7 +18,7 @@ jobs:
             cc: gcc
             bin: phasmo-tracker
           - os: windows-latest
-            cc: msvc
+            cc: gcc
             bin: phasmo-tracker.exe
 
     steps:
