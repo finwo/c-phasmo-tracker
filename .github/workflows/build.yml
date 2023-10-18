@@ -44,8 +44,8 @@ jobs:
         run: dep install
         shell: bash
 
-      - if: runner.os == 'Linux'
-        name: List everything
+      - name: List everything
+        shell: bash
         run: find .
 
       - name: Build
