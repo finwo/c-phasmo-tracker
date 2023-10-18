@@ -31,11 +31,19 @@ jobs:
           sudo apt update
           sudo apt install -y libgtk-3-dev libwebkit2gtk-4.0-dev libglib2.0-dev
 
-      # - if: runner.os == 'Windows'
-      #   name: Install dependencies (windows)
-      #   run: |
-      #     sudo apt update
-      #     sudo apt install -y libgtk-3-dev libwebkit2gtk-4.0-dev
+      - if: runner.os == 'Windows'
+        name: Install dependencies (windows)
+        run: |
+          mkdir external
+          mkdir external\\tools
+          mkdir external\\libs
+          curl -sSLo "external\\tools\\nuget.exe" https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+          external\\tools\\nuget install Microsoft.Web.Webview2 -Verbosity quiet -Version "1.0.1150.38" -OutputDirectory "external\\libs" || exit /b 1
+
+      - if: runner.os == 'Windows'
+        name: List everything
+        shell: bash
+        run: find external
 
       - uses: finwo/dep@main
         name: Install dep
