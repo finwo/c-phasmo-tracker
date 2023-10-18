@@ -2,8 +2,8 @@ LIBS:=
 SRC:=
 BIN?=phasmo-tracker
 
-CC?=gcc
-CPP?=g++
+CC:=gcc
+CPP:=g++
 
 SRC+=$(wildcard src/*.c)
 
@@ -33,9 +33,7 @@ else
     UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Linux)
         # CFLAGS += -D LINUX
-        override CPPFLAGS+=$(shell pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0)
-        override CPPFLAGS+=$(shell pkg-config --libs glib-2.0)
-        override CFLAGS+=$(shell pkg-config --libs glib-2.0)
+        override CFLAGS+=$(shell pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0 glib-2.0)
     endif
     ifeq ($(UNAME_S),Darwin)
         # CFLAGS += -D OSX
@@ -59,11 +57,30 @@ OBJ:=$(OBJ:.cc=.o)
 
 override CFLAGS+=$(INCLUDES)
 override CPPFLAGS+=$(INCLUDES)
+override CPPFLAGS+=$(CFLAGS)
 
 .PHONY: default
 default: $(BIN)
 
-$(OBJ): $(SRC)
+.cc.o:
+	echo ---[ CPP ]---
+	echo cc: $(CPP)
+	echo obj: $(OBJ)
+	echo flags: $(CPPFLAGS)
+	echo @: $(@)
+	echo ^: $(^)
+	$(CPP) $^ $(CPPFLAGS) -c -o $@
+
+.c.o:
+	echo ---[ CC ]---
+	echo cc: $(CC)
+	echo obj: $(OBJ)
+	echo flags: $(CFLAGS)
+	echo @: $(@)
+	echo ^: $(^)
+	$(CC) $^ $(CFLAGS) -c -o $@
+
+# $(OBJ): $(SRC)
 
 $(BIN): $(OBJ)
 	$(CPP) $(OBJ) $(CPPFLAGS) -s -o $@
