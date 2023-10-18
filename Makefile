@@ -5,7 +5,6 @@ BIN?=phasmo-tracker
 CC:=gcc
 CPP:=g++
 
-SRC+=$(wildcard src/*.c)
 
 INCLUDES:=
 
@@ -18,6 +17,7 @@ override CFLAGS+=-D WEBVIEW_STATIC
 override CPPFLAGS+=-D WEBVIEW_STATIC
 
 ifeq ($(OS),Windows_NT)
+    SRC+=$(wildcard src\\*.c)
     # CFLAGS += -D WIN32
     ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
         # CFLAGS += -D AMD64
@@ -30,6 +30,7 @@ ifeq ($(OS),Windows_NT)
         endif
     endif
 else
+    SRC+=$(wildcard src/*.c)
     UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Linux)
         # CFLAGS += -D LINUX
