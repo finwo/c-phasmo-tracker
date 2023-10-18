@@ -19,6 +19,7 @@ override CPPFLAGS+=-D WEBVIEW_STATIC
 
 ifeq ($(OS),Windows_NT)
     # CFLAGS += -D WIN32
+    override CPPFLAGS+=/I external/libs/Microsoft.Web.WebView2.1.0.1150.38/build/native/include
     ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
         # CFLAGS += -D AMD64
     else
@@ -34,7 +35,6 @@ else
     ifeq ($(UNAME_S),Linux)
         # CFLAGS += -D LINUX
         override CFLAGS+=$(shell pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0 glib-2.0)
-        override CPPFLAGS+=/I external/libs/Microsoft.Web.WebView2.1.0.1150.38/build/native/include
     endif
     ifeq ($(UNAME_S),Darwin)
         # CFLAGS += -D OSX
