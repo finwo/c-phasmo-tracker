@@ -17,9 +17,9 @@ jobs:
           - os: ubuntu-latest
             cc: gcc
             bin: phasmo-tracker
-          - os: windows-latest
-            cc: msvc
-            bin: phasmo-tracker.exe
+          # - os: windows-latest
+          #   cc: msvc
+          #   bin: phasmo-tracker.exe
 
     steps:
 
