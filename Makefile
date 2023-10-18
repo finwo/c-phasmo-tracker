@@ -19,7 +19,7 @@ override CPPFLAGS+=-D WEBVIEW_STATIC
 
 ifeq ($(OS),Windows_NT)
     # CFLAGS += -D WIN32
-    override CPPFLAGS+=/I external/libs/Microsoft.Web.WebView2.1.0.1150.38/build/native/include
+    override CPPFLAGS+=-I external/libs/Microsoft.Web.WebView2.1.0.1150.38/build/native/include
     ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
         # CFLAGS += -D AMD64
     else
