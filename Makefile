@@ -33,7 +33,7 @@ else
     UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Linux)
         # CFLAGS += -D LINUX
-        override CPPFLAGS+=`pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0`
+        override CPPFLAGS+=$(shell pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0)
     endif
     ifeq ($(UNAME_S),Darwin)
         # CFLAGS += -D OSX
