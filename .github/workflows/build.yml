@@ -20,8 +20,8 @@ jobs:
             bin: phasmo-tracker
             cppflags:
           - os: windows-latest
-            cc: msvc
-            cpp: msvc
+            cc: cl
+            cpp: cl
             bin: phasmo-tracker.exe
             cppflags: /I external\\libs\\Microsoft.Web.WebView2.1.0.1150.38\\build\\native\\include
 
