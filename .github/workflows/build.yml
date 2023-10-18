@@ -43,6 +43,7 @@ jobs:
           mkdir external\\libs
           curl -sSLo "external\\tools\\nuget.exe" https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
           external\\tools\\nuget install Microsoft.Web.Webview2 -Verbosity quiet -Version "1.0.1150.38" -OutputDirectory "external\\libs" || exit /b 1
+          choco install llvm
 
       - if: runner.os == 'Windows'
         name: List everything
