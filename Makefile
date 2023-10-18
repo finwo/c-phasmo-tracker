@@ -34,6 +34,8 @@ else
     ifeq ($(UNAME_S),Linux)
         # CFLAGS += -D LINUX
         override CPPFLAGS+=$(shell pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0)
+        override CPPFLAGS+=$(shell pkg-config --libs glib-2.0)
+        override CFLAGS+=$(shell pkg-config --libs glib-2.0)
     endif
     ifeq ($(UNAME_S),Darwin)
         # CFLAGS += -D OSX
