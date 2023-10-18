@@ -61,7 +61,7 @@ jobs:
         run: find .
 
       - name: Build
-        run: make CC=${{ matrix.cc }} CPP=${{ matrix.cpp }} BIN=${{ matrix.bin }} CPPFLAGS=${{ matrix.cppflags }}
+        run: make CC=${{ matrix.cc }} CPP=${{ matrix.cpp }} BIN=${{ matrix.bin }} "CPPFLAGS=${{ matrix.cppflags }}"
         shell: bash
 
       # - name: Upload binaries to release
