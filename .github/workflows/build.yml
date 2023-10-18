@@ -47,21 +47,12 @@ jobs:
         run: |
           echo "/c/msys64/mingw64/bin" >> $GITHUB_PATH
 
-      - if: runner.os == 'Windows'
-        name: List everything
-        shell: bash
-        run: find external
-
       - uses: finwo/dep@main
         name: Install dep
 
       - name: Install dependencies
         run: dep install
         shell: bash
-
-      - name: List everything
-        shell: bash
-        run: find .
 
       - name: Build
         run: make CC=${{ matrix.cc }} CPP=${{ matrix.cpp }} BIN=${{ matrix.bin }}

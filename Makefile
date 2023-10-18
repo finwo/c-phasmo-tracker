@@ -64,24 +64,10 @@ override CPPFLAGS+=$(CFLAGS)
 default: $(BIN)
 
 .cc.o:
-	echo ---[ CPP ]---
-	echo cc: $(CPP)
-	echo obj: $(OBJ)
-	echo flags: $(CPPFLAGS)
-	echo @: $(@)
-	echo ^: $(^)
 	$(CPP) $^ $(CPPFLAGS) -c -o $@
 
 .c.o:
-	echo ---[ CC ]---
-	echo cc: $(CC)
-	echo obj: $(OBJ)
-	echo flags: $(CFLAGS)
-	echo @: $(@)
-	echo ^: $(^)
 	$(CC) $^ $(CFLAGS) -c -o $@
-
-# $(OBJ): $(SRC)
 
 $(BIN): $(OBJ)
 	$(CPP) $(OBJ) $(CPPFLAGS) -s -o $@
