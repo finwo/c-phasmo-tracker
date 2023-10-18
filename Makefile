@@ -66,7 +66,7 @@ default: $(BIN)
 $(OBJ): $(SRC)
 
 $(BIN): $(OBJ)
-	$(GPP) $(CPPFLAGS) -s $(OBJ) -o $@
+	$(GPP) $(OBJ) $(CPPFLAGS) -s -o $@
 
 .PHONY: clean
 clean:
