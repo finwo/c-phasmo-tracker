@@ -18,12 +18,10 @@ jobs:
             cc: gcc
             cpp: g++
             bin: phasmo-tracker
-            cppflags:
           - os: windows-latest
             cc: clang
             cpp: clang++
             bin: phasmo-tracker.exe
-            cppflags: /I external\\libs\\Microsoft.Web.WebView2.1.0.1150.38\\build\\native\\include
 
     steps:
 
@@ -66,7 +64,7 @@ jobs:
         run: find .
 
       - name: Build
-        run: make CC=${{ matrix.cc }} CPP=${{ matrix.cpp }} BIN=${{ matrix.bin }} "CPPFLAGS=${{ matrix.cppflags }}"
+        run: make CC=${{ matrix.cc }} CPP=${{ matrix.cpp }} BIN=${{ matrix.bin }}
         shell: bash
 
       # - name: Upload binaries to release
