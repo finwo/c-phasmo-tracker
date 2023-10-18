@@ -3,7 +3,7 @@ SRC:=
 BIN?=phasmo-tracker
 
 CC?=gcc
-GPP?=g++
+CPP?=g++
 
 SRC+=$(wildcard src/*.c)
 
@@ -66,7 +66,7 @@ default: $(BIN)
 $(OBJ): $(SRC)
 
 $(BIN): $(OBJ)
-	$(GPP) $(OBJ) $(CPPFLAGS) -s -o $@
+	$(CPP) $(OBJ) $(CPPFLAGS) -s -o $@
 
 .PHONY: clean
 clean:
