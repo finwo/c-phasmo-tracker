@@ -5,6 +5,7 @@
 #include <string.h>
 
 #ifdef _WIN32
+#include "lockless/winpthreads.h"
 #include <windows.h>
 #endif
 
