@@ -4,13 +4,11 @@
 #include <string.h>
 
 #ifdef _WIN32
-#include "user-none/winpthreads.h"
 #include <windows.h>
-#else
-#include <pthread.h>
 #endif
 
 #include "cesanta/mongoose.h"
+#include "user-none/winpthreads.h"
 #include "webview/webview.h"
 
 typedef struct {
