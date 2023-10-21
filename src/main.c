@@ -1,4 +1,3 @@
-#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -7,6 +6,9 @@
 #ifdef _WIN32
 #include "lockless/winpthreads.h"
 #include <windows.h>
+#include <pthread.h>
+#else
+
 #endif
 
 #include "cesanta/mongoose.h"
