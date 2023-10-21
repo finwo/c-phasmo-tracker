@@ -4,7 +4,7 @@
 #include <string.h>
 
 #ifdef _WIN32
-#include "lockless/winpthreads.h"
+#include "user-none/winpthreads.h"
 #include <windows.h>
 #else
 #include <pthread.h>
