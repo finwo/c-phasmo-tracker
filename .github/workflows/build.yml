@@ -8,33 +8,20 @@ on:
 
 jobs:
 
-  build-packages:
+  build-windows:
     name: Build and upload artifact
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
-            cc: gcc
-            cpp: g++
-            bin: phasmo-tracker
           - os: windows-latest
             cc: clang
             cpp: clang++
-            bin: phasmo-tracker.exe
-
+            bin: phasmo-tracker-win-x64.exe
     steps:
-
       - uses: actions/checkout@v3
 
-      - if: runner.os == 'Linux'
-        name: Install dependencies (linux)
-        run: |
-          sudo apt update
-          sudo apt install -y libgtk-3-dev libwebkit2gtk-4.0-dev libglib2.0-dev
-
-      - if: runner.os == 'Windows'
-        name: Install dependencies (windows)
+      - name: Install dependencies (windows)
         run: |
           mkdir external
           mkdir external\\tools
@@ -42,8 +29,7 @@ jobs:
           curl -sSLo "external\\tools\\nuget.exe" https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
           external\\tools\\nuget install Microsoft.Web.Webview2 -Verbosity quiet -Version "1.0.1150.38" -OutputDirectory "external\\libs" || exit /b 1
 
-      - if: runner.os == 'Windows'
-        shell: bash
+      - shell: bash
         run: |
           echo "/c/msys64/mingw64/bin" >> $GITHUB_PATH
 
@@ -57,6 +43,60 @@ jobs:
       - name: Build
         run: make CC=${{ matrix.cc }} CPP=${{ matrix.cpp }} BIN=${{ matrix.bin }}
         shell: bash
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ matrix.bin }}
+          file_glob: true
+          overwrite: true
+          tag: ${{ github.ref }}
+
+  build-linux:
+    name: Build and upload artifact
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - distro: ubuntu_latest
+            arch: aarch64
+            cc: gcc
+            cpp: g++
+            bin: phasmo-tracker-lin-aaarch64
+          - distro: ubuntu_latest
+            arch: none
+            cc: gcc
+            cpp: g++
+            bin: phasmo-tracker-lin-x64
+
+    steps:
+
+      - uses: actions/checkout@v3
+
+      - uses: finwo/dep@main
+        name: Install dep
+
+      - name: Install dependencies
+        run: dep install
+        shell: bash
+
+      - uses: uraimo/run-on-arch-action@v2
+        name: Build
+        id: runcmd
+        with:
+          arch: ${{ matrix.arch }}
+          distro: ${{ matrix.distro }}
+          githubToken: ${{ github.token }}
+
+          run: |
+            sudo apt update
+            sudo apt install -y libgtk-3-dev libwebkit2gtk-4.0-dev libglib2.0-dev
+            make CC=${{ matrix.cc }} CPP=${{ matrix.cpp }} BIN=${{ matrix.bin }}
+
+      # - name: Build
+      #   run: make CC=${{ matrix.cc }} CPP=${{ matrix.cpp }} BIN=${{ matrix.bin }}
+      #   shell: bash
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
