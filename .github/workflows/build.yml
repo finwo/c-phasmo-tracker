@@ -73,12 +73,6 @@ jobs:
             bin: phasmo-tracker-lin-armv7
 
           - distro: ubuntu_latest
-            arch: armv6
-            cc: gcc
-            cpp: g++
-            bin: phasmo-tracker-lin-armv6
-
-          - distro: ubuntu_latest
             arch: riscv64
             cc: gcc
             cpp: g++
