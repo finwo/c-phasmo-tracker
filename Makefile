@@ -10,7 +10,7 @@ SRC+=$(wildcard src/*.c)
 INCLUDES:=
 
 override CFLAGS?=-Wall -O2
-override CFLAGS+=-lpthread
+override CFLAGS+=-pthread
 
 override CPPFLAGS?=
 override CPPFLAGS+=-lstdc++
@@ -63,6 +63,7 @@ override CPPFLAGS+=$(CFLAGS)
 
 htmltools:=
 htmltools+=tool/control-ui/dist/index.bundled.html
+htmltools+=tool/overlay-phasmo-tracker/dist/index.bundled.html
 
 headertools=$(htmltools:.html=.h)
 
