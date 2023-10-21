@@ -90,9 +90,11 @@ jobs:
           distro: ${{ matrix.distro }}
           githubToken: ${{ github.token }}
 
+          install: |
+            apt-get update -yq
+            apt-get install -yq libgtk-3-dev libwebkit2gtk-4.0-dev libglib2.0-dev
+
           run: |
-            sudo apt update
-            sudo apt install -y libgtk-3-dev libwebkit2gtk-4.0-dev libglib2.0-dev
             make CC=${{ matrix.cc }} CPP=${{ matrix.cpp }} BIN=${{ matrix.bin }}
 
       - if: ${{ matrix.arch == 'none' }}
