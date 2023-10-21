@@ -60,14 +60,30 @@ override CFLAGS+=$(INCLUDES)
 override CPPFLAGS+=$(INCLUDES)
 override CPPFLAGS+=$(CFLAGS)
 
+htmltools:=
+htmltools+=tool/control-ui/dist/index.bundled.html
+
+headertools=$(htmltools:.html=.h)
+
 .PHONY: default
 default: $(BIN)
 
+$(OBJ): $(headertools)
+
+tool/bin2c/bin2c:
+	bash -c "cd tool/bin2c && make"
+
+$(htmltools):
+	bash -c "cd $$(dirname $$(dirname $@)) && npm i && npm run build"
+
+$(headertools): tool/bin2c/bin2c $(htmltools)
+	tool/bin2c/bin2c < $(@:.h=.html) > $@
+
 .cc.o:
-	$(CPP) $^ $(CPPFLAGS) -c -o $@
+	$(CPP) $< $(CPPFLAGS) -c -o $@
 
 .c.o:
-	$(CC) $^ $(CFLAGS) -c -o $@
+	$(CC) $< $(CFLAGS) -c -o $@
 
 $(BIN): $(OBJ)
 	$(CPP) $(OBJ) $(CPPFLAGS) -s -o $@

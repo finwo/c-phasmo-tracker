@@ -8,6 +8,24 @@
 
 #include "webview/webview.h"
 
+typedef struct {
+  int port;
+} context_t;
+
+#define UNUSED(x) (void)x
+
+const char html[] = {
+#include "../tool/control-ui/dist/index.bundled.h"
+};
+
+void wv_test(const char *seq, const char *req, void *arg) {
+  context_t *context = (context_t *)arg;
+
+  UNUSED(seq);
+  UNUSED(req);
+  printf("Bound fn was called!\nseq: %s\nreq: %s\n", seq, req);
+}
+
 #ifdef _WIN32
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine,
                    int nCmdShow) {
@@ -18,10 +36,18 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine,
 #else
 int main() {
 #endif
-  webview_t w = webview_create(0, NULL);
+  context_t context = {
+    .port = 3000,
+  };
+
+
+  webview_t w = webview_create(1, NULL);
   webview_set_title(w, "Basic Example");
   webview_set_size(w, 480, 320, WEBVIEW_HINT_NONE);
-  webview_set_html(w, "Thanks for using webview!");
+
+  webview_bind(w, "wv_test", wv_test, &context);
+
+  webview_set_html(w, html);
   webview_run(w);
   webview_destroy(w);
   return 0;

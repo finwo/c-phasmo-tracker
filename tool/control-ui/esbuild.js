@@ -33,11 +33,12 @@ const config = {
 };
 
 const buildList = [];
-const styles    = [];
+const styles    = ['global.css'];
 
 esbuild
   .build(config)
   .then(() => {
+    fs.copyFileSync(`./src/global.css`, `./dist/global.css`);
 
     for(const name of Object.keys(entryPoints)) {
       buildList.push(`${name}.js`);
