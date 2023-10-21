@@ -106,7 +106,7 @@ jobs:
 
           install: |
             apt-get update -yq
-            apt-get install -yq build-essential libgtk-3-dev libwebkit2gtk-4.0-dev libglib2.0-dev
+            apt-get install -yq build-essential libgtk-3-dev libwebkit2gtk-4.0-dev libglib2.0-dev nodejs
 
           run: |
             make CC=${{ matrix.cc }} CPP=${{ matrix.cpp }} BIN=${{ matrix.bin }}
