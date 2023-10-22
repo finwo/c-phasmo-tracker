@@ -8,7 +8,7 @@
 #endif
 
 #include "cesanta/mongoose.h"
-#include "user-none/winpthreads.h"
+#include "pierreguillot/thread.h"
 #include "webview/webview.h"
 
 typedef struct {
@@ -111,14 +111,14 @@ int main() {
   context_t context = {
     .port = 3000,
   };
-  pthread_t threads[2];
+  thd_thread threads[2];
   int i;
 
-  i = pthread_create(&threads[0], NULL, thread_http  , &context);
-  i = pthread_create(&threads[1], NULL, thread_window, &context);
+  i = thd_thread_detach(&threads[0], thread_http  , &context);
+  i = thd_thread_detach(&threads[1], thread_window, &context);
 
   for(i = 0; i < 2 ; i++) {
-    pthread_join(threads[i], NULL);
+    thd_thread_join(threads[i]);
   }
 
   return 0;
