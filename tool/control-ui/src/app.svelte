@@ -12,7 +12,7 @@
 </main>
 
 <script>
-  let port = 3000;
+  let port = 4000;
 
   function handleSettingsUpdate(e) {
     e.preventDefault();
