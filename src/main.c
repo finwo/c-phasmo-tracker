@@ -52,6 +52,12 @@ void onServing(char *addr, uint16_t port, void *udata) {
   printf("Serving at %s:%d\n", addr, port);
 }
 
+void onTick(void *udata) {
+  struct http_server_opts *opts = udata;
+
+  printf("Tick on %s:%d\n", opts->addr, opts->port);
+}
+
 void route_404(struct http_server_reqdata *reqdata) {
   http_parser_header_set(reqdata->reqres->response, "Content-Type", "text/plain");
   reqdata->reqres->response->status     = 404;
@@ -75,29 +81,19 @@ void thread_http(void * arg) {
   struct http_server_events evs = {
     .serving  = onServing,
     .close    = NULL,
-    .notFound = route_404
+    .notFound = route_404,
+    .tick     = NULL,
+  };
+  struct http_server_opts opts = {
+    .evs  = &evs,
+    .addr = "0.0.0.0",
+    .port = 8080,
   };
 
+
+
   http_server_route("GET", "/pizza", route_get_pizza);
-
-/* #if defined(_WIN32) */
-/*   {WORD wsa_version = MAKEWORD(2,2); */
-/*     WSADATA wsa_data; */
-/*     if (WSAStartup(wsa_version, &wsa_data)) { */
-/*         fprintf(stderr, "WSAStartup failed\n"); */
-/*         return 1; */
-/*   }} */
-/* #endif */
-
-  http_server_main(&(const struct http_server_opts){
-    .evs    = &evs,
-    .addr   = "0.0.0.0",
-    .port   = 8080,
-  });
-
-/* #if defined(_WIN32) */
-/*   WSACleanup(); */
-/* #endif */
+  http_server_main(&opts);
 }
 
 
