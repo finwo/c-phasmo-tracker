@@ -94,8 +94,5 @@ $(BIN): $(OBJ)
 clean:
 	rm -rf $(BIN)
 	rm -rf $(OBJ)
-	rm -rf tool/bin2c/bin2c
 	rm -rf tool/conrol-ui/dist
-	rm -rf tool/conrol-ui/node_modules
 	rm -rf tool/overlay-phasmo-tracker/dist
-	rm -rf tool/overlay-phasmo-tracker/node_modules
