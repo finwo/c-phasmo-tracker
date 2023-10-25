@@ -43,7 +43,7 @@ jobs:
       - name: Pre-render html
         shell: bash
         run: |
-          make headertools
+          make headertools CC=${{ matrix.cc }}
 
       - name: Build
         run: make CC=${{ matrix.cc }} CPP=${{ matrix.cpp }} BIN=${{ matrix.bin }}
@@ -103,7 +103,7 @@ jobs:
       - name: Pre-render html
         shell: bash
         run: |
-          make headertools
+          make headertools CC=${{ matrix.cc }}
 
       - if: ${{ matrix.arch != 'none' }}
         uses: uraimo/run-on-arch-action@v2
