@@ -31,7 +31,7 @@ struct llistener *listeners = NULL;
 
 #define UNUSED(x) (void)x
 
-char * get_html(char *name) {
+char * get_html(const char *name) {
   if (!strcmp("control-ui", name)) {
     return
 #include "../tool/control-ui/dist/index.bundled.h"
