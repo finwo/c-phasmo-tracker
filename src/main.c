@@ -11,6 +11,7 @@
 #include <unistd.h>
 #endif
 
+#include "finwo/fnet.h"
 #include "finwo/http-parser.h"
 #include "finwo/http-server.h"
 #include "pierreguillot/thread.h"
@@ -19,6 +20,14 @@
 typedef struct {
   int port;
 } context_t;
+
+struct llistener {
+  void *next;
+  char *topic;
+  struct fnet_t *conn;
+};
+
+struct llistener *listeners = NULL;
 
 #define UNUSED(x) (void)x
 
@@ -88,6 +97,116 @@ void route_get_overlay_phasmo_tracker(struct http_server_reqdata *reqdata) {
   http_server_response_send(reqdata, true);
 }
 
+// Generic GET topic route
+void route_get_topic(struct http_server_reqdata *reqdata, const char *topic) {
+  struct fnet_t              *conn     = reqdata->connection;
+  struct http_parser_message *request  = reqdata->reqres->request;
+  struct http_parser_message *response = reqdata->reqres->response;
+
+  // Build response
+  const char *origin = http_parser_header_get(request, "Origin");
+  response->status = 200;
+  http_parser_header_set(response, "Transfer-Encoding"           , "chunked"             );
+  http_parser_header_set(response, "Content-Type"                , "application/x-ndjson");
+  http_parser_header_set(response, "Access-Control-Allow-Origin" , origin ? origin : "*" );
+
+  // Assign an empty body, we're not doing anything yet
+  response->body = calloc(1, sizeof(struct buf));
+  response->body->data = strdup("");
+  response->body->len  = 0;
+  response->body->cap  = 1;
+
+  // Send response
+  struct buf *response_buffer = http_parser_sprint_response(response);
+  fnet_write(conn, response_buffer);
+  buf_clear(response_buffer);
+  free(response_buffer);
+
+  // Add the connection to listener list
+  struct llistener *listener = malloc(sizeof(struct llistener));
+  listener->conn  = conn;
+  listener->next  = listeners;
+  listener->topic = strdup(topic);
+  listeners       = listener;
+}
+
+// Generic POST topic route
+void route_post_topic(struct http_server_reqdata *reqdata, const char *topic) {
+  struct fnet_t              *conn          = reqdata->connection;
+  struct http_parser_message *request       = reqdata->reqres->request;
+  struct http_parser_message *response      = reqdata->reqres->response;
+  struct llistener           *listener      = listeners;
+  struct llistener           *listener_prev = NULL;
+
+  // Ensure there's a newline
+  buf_append(request->body, "\n", 1);
+
+  // Pre-build chunk
+  int chunksize = request->body->len + 64;
+  char *chunk = calloc(1, chunksize);
+  chunksize = snprintf(chunk, chunksize, "%lx\r\n%s\r\n", request->body->len, request->body->data);
+
+  // Output to all listeners on the topic
+  while(listener) {
+    // Handle closed connections
+    if (listener->conn->status & FNET_STATUS_CLOSED) {
+      if (listener_prev) {
+        listener_prev->next = listener->next;
+        fnet_free(listener->conn);
+        free(listener->topic);
+        free(listener);
+        listener = listener_prev->next;
+        continue;
+      } else {
+        listeners = listener->next;
+        fnet_free(listener->conn);
+        free(listener->topic);
+        free(listener);
+        listener = listeners;
+        continue;
+      }
+    }
+    // Transmit to listener
+    if (!strcmp(listener->topic, topic)) {
+      fnet_write(listener->conn, &(struct buf){
+          .data = chunk,
+          .len  = chunksize,
+          .cap  = chunksize,
+      });
+    }
+    // Continue to next listener
+    listener_prev = listener;
+    listener      = listener->next;
+  }
+
+  // And we're done with this memory
+  free(chunk);
+
+  // Build response
+  const char *origin = http_parser_header_get(request, "Origin");
+  response->status = 200;
+  http_parser_header_set(response, "Content-Type"                , "application/json"   );
+  http_parser_header_set(response, "Access-Control-Allow-Origin" , origin ? origin : "*");
+  response->body       = calloc(1, sizeof(struct buf));
+  response->body->data = strdup("{\"ok\":true}");
+  response->body->len  = strlen(response->body->data);
+  response->body->cap  = response->body->len + 1;
+
+  // Send response
+  struct buf *response_buffer = http_parser_sprint_response(response);
+  fnet_write(reqdata->connection, response_buffer);
+  buf_clear(response_buffer);
+  free(response_buffer);
+  fnet_close(conn);
+}
+
+void route_get_topic_chat(struct http_server_reqdata *reqdata) {
+  return route_get_topic(reqdata, "chat");
+}
+void route_post_topic_chat(struct http_server_reqdata *reqdata) {
+  return route_post_topic(reqdata, "chat");
+}
+
 void thread_http(void * arg) {
   struct http_server_events evs = {
     .serving  = onServing,
@@ -101,8 +220,10 @@ void thread_http(void * arg) {
     .port = 8080,
   };
 
-  http_server_route("GET", "/pizza"                 , route_get_pizza);
-  http_server_route("GET", "/overlay/phasmo-tracker", route_get_overlay_phasmo_tracker);
+  http_server_route("GET" , "/pizza"                 , route_get_pizza);
+  http_server_route("GET" , "/overlay/phasmo-tracker", route_get_overlay_phasmo_tracker);
+  http_server_route("GET" , "/topic/chat"            , route_get_topic_chat);
+  http_server_route("POST", "/topic/chat"            , route_post_topic_chat);
   http_server_main(&opts);
 }
 
@@ -128,19 +249,6 @@ void wv_test(const char *seq, const char *req, void *arg) {
   context->port++;
   printf("New port: %d\n", context->port);
 }
-
-/* static void handle_http(struct mg_connection *c, int ev, void *ev_data, void *fn_data) { */
-/*   if (ev == MG_EV_HTTP_MSG) { */
-/*     struct mg_http_message *hm = (struct mg_http_message *) ev_data; */
-/*     if (mg_http_match_uri(hm, "/api/hello")) {              // On /api/hello requests, */
-/*       mg_http_reply(c, 200, "", "{%m:%d}\n", */
-/*                     MG_ESC("status"), 1);                   // Send dynamic JSON response */
-/*     } else {                                                // For all other URIs, */
-/*       struct mg_http_serve_opts opts = {.root_dir = "."};   // Serve files */
-/*       mg_http_serve_dir(c, hm, &opts);                      // From root_dir */
-/*     } */
-/*   } */
-/* } */
 
 #ifdef _WIN32
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine,
