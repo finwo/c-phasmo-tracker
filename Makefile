@@ -75,9 +75,11 @@ $(OBJ): $(headertools)
 tool/bin2c/bin2c:
 	bash -c "cd tool/bin2c && make"
 
+htmltools: $(htmltools)
 $(htmltools):
 	bash -c "cd $$(dirname $$(dirname $@)) && npm i && npm run build"
 
+headertools: $(headertools)
 $(headertools): tool/bin2c/bin2c $(htmltools)
 	tool/bin2c/bin2c < $(@:.h=.html) > $@
 

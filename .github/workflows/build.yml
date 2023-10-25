@@ -40,6 +40,11 @@ jobs:
         run: dep install
         shell: bash
 
+      - name: Pre-render html
+        shell: bash
+        run: |
+          make headertools
+
       - name: Build
         run: make CC=${{ matrix.cc }} CPP=${{ matrix.cpp }} BIN=${{ matrix.bin }}
         shell: bash
@@ -86,8 +91,13 @@ jobs:
         name: Install dep
 
       - name: Install dependencies
-        run: dep install
         shell: bash
+        run: dep install
+
+      - name: Pre-render html
+        shell: bash
+        run: |
+          make headertools
 
       - if: ${{ matrix.arch != 'none' }}
         uses: uraimo/run-on-arch-action@v2
@@ -99,12 +109,7 @@ jobs:
           githubToken: ${{ github.token }}
 
           install: |
-            apt-get update
-            apt-get install -y ca-certificates curl gnupg
-            curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-            echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
             apt-get update -y
-            apt-get install nodejs -y
             apt-get install -yq build-essential libgtk-3-dev libwebkit2gtk-4.0-dev libglib2.0-dev
 
           run: |
