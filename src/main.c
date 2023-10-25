@@ -81,20 +81,16 @@ void route_404(struct http_server_reqdata *reqdata) {
   http_server_response_send(reqdata, true);
 }
 
-void route_get_pizza(struct http_server_reqdata *reqdata) {
-  http_parser_header_set(reqdata->reqres->response, "Content-Type", "text/plain");
+void route_get_html(struct http_server_reqdata *reqdata, const char *name) {
+  http_parser_header_set(reqdata->reqres->response, "Content-Type", "text/html");
   reqdata->reqres->response->body       = calloc(1, sizeof(struct buf));
-  reqdata->reqres->response->body->data = strdup("calzone\n");
+  reqdata->reqres->response->body->data = strdup(get_html(name));
   reqdata->reqres->response->body->len  = strlen(reqdata->reqres->response->body->data);
   http_server_response_send(reqdata, true);
 }
 
 void route_get_overlay_phasmo_tracker(struct http_server_reqdata *reqdata) {
-  http_parser_header_set(reqdata->reqres->response, "Content-Type", "text/html");
-  reqdata->reqres->response->body       = calloc(1, sizeof(struct buf));
-  reqdata->reqres->response->body->data = strdup(get_html("overlay-phasmo-tracker"));
-  reqdata->reqres->response->body->len  = strlen(reqdata->reqres->response->body->data);
-  http_server_response_send(reqdata, true);
+  route_get_html(reqdata, "overlay-phasmo-tracker");
 }
 
 // Generic GET topic route
@@ -220,7 +216,6 @@ void thread_http(void * arg) {
     .port = 8080,
   };
 
-  http_server_route("GET" , "/pizza"                 , route_get_pizza);
   http_server_route("GET" , "/overlay/phasmo-tracker", route_get_overlay_phasmo_tracker);
   http_server_route("GET" , "/topic/chat"            , route_get_topic_chat);
   http_server_route("POST", "/topic/chat"            , route_post_topic_chat);
