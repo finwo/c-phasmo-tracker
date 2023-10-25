@@ -1,6 +1,6 @@
 LIBS:=
 SRC:=
-BIN?=phasmo-tracker
+BIN?=stream-companion
 
 CC:=gcc
 CPP:=g++

@@ -17,7 +17,7 @@ jobs:
           - os: windows-latest
             cc: clang
             cpp: clang++
-            bin: phasmo-tracker-win-x64.exe
+            bin: stream-companion-win-x64.exe
     steps:
       - uses: actions/checkout@v3
 
@@ -64,25 +64,25 @@ jobs:
             arch: aarch64
             cc: gcc
             cpp: g++
-            bin: phasmo-tracker-lin-aarch64
+            bin: stream-companion-lin-aarch64
 
           - distro: ubuntu_latest
             arch: armv7
             cc: gcc
             cpp: g++
-            bin: phasmo-tracker-lin-armv7
+            bin: stream-companion-lin-armv7
 
           - distro: ubuntu_latest
             arch: riscv64
             cc: gcc
             cpp: g++
-            bin: phasmo-tracker-lin-riscv64
+            bin: stream-companion-lin-riscv64
 
           - distro: ubuntu_latest
             arch: none
             cc: gcc
             cpp: g++
-            bin: phasmo-tracker-lin-x64
+            bin: stream-companion-lin-x64
 
     steps:
 
