@@ -78,6 +78,12 @@ jobs:
             bin: stream-companion-lin-armv7
 
           - distro: ubuntu_latest
+            arch: riscv64
+            cc: gcc
+            cpp: g++
+            bin: stream-companion-lin-riscv64
+
+          - distro: ubuntu_latest
             arch: none
             cc: gcc
             cpp: g++
