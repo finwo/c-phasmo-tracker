@@ -1,4 +1,6 @@
+/.cache/
 /lib/
 /stream-companion
 /stream-companion.exe
 *.o
+/compile_commands.json
