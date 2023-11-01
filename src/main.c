@@ -48,20 +48,20 @@ char * get_html(const char *name) {
   return "";
 }
 
-static void sleep_ms(long ms) {
-#if defined(__APPLE__)
-    usleep(ms * 1000);
-#elif defined(_WIN32)
-    Sleep(ms);
-#else
-    time_t sec = (int)(ms / 1000);
-    const long t = ms -(sec * 1000);
-    struct timespec req;
-    req.tv_sec = sec;
-    req.tv_nsec = t * 1000000L;
-    while(-1 == nanosleep(&req, &req));
-#endif
-}
+/* static void sleep_ms(long ms) { */
+/* #if defined(__APPLE__) */
+/*     usleep(ms * 1000); */
+/* #elif defined(_WIN32) */
+/*     Sleep(ms); */
+/* #else */
+/*     time_t sec = (int)(ms / 1000); */
+/*     const long t = ms -(sec * 1000); */
+/*     struct timespec req; */
+/*     req.tv_sec = sec; */
+/*     req.tv_nsec = t * 1000000L; */
+/*     while(-1 == nanosleep(&req, &req)); */
+/* #endif */
+/* } */
 
 void wv_test(const char *seq, const char *req, void *arg);
 
@@ -280,13 +280,12 @@ int main() {
     .port     = 3000,
   };
   pthread_t threads[3];
-  int i, s;
 
   /* thd_thread_detach(&threads[0], fnet_thread  , NULL    ); */
   /* thd_thread_detach(&threads[1], thread_http  , &context); */
   thd_thread_detach(&threads[2], thread_window, &context);
 
-  printf("Sizeof threads: %d\n", sizeof(threads));
+  printf("Sizeof threads: %ld\n", sizeof(threads));
 
   /* thd_thread_join(&threads[1]); */
   thd_thread_join(&threads[2]);
