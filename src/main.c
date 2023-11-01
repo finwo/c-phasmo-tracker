@@ -297,6 +297,6 @@ int main() {
   /* } */
 
   printf("Main fn finished\n");
-  pthread_exit(NULL);
+  /* pthread_exit(NULL); */
   /* return 0; */
 }
