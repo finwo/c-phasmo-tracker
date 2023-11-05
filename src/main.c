@@ -6,9 +6,8 @@
 
 #if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
-#endif
-
-#ifdef __APLE__
+#else
+#include <pwd.h>
 #include <unistd.h>
 #endif
 
@@ -18,8 +17,17 @@
 #include "tinycthread/tinycthread.h"
 #include "webview/webview.h"
 
+#ifndef DIRECTORY_SEPARATOR
+#if defined(_WIN32) || defined(_WIN64)
+#define DIRECTORY_SEPARATOR "\\"
+#else
+#define DIRECTORY_SEPARATOR "/"
+#endif
+#endif
+
 typedef struct {
   int port;
+  char *settings_dir;
   struct http_server_opts *http_opts;
   webview_t w;
 } context_t;
@@ -46,6 +54,30 @@ char * get_html(const char *name) {
       ;
   }
   return "";
+}
+
+const char * homedir() {
+  const char *response;
+#if defined(_WIN32) || defined(_WIN64)
+  return getenv("USERPROFILE");
+#else
+  if ((response = getenv("HOME")) == NULL) {
+    response = getpwuid(getuid())->pw_dir;
+  }
+  return response;
+#endif
+}
+
+void bound_homedir(const char *seq, const char *req, void *arg) {
+  UNUSED(req);
+  context_t *context = arg;
+  char *response = calloc(strlen(context->settings_dir) + 3, 1);
+  strcat(response, "\"");
+  strcat(response, context->settings_dir);
+  strcat(response, "\"");
+  webview_return(context->w, seq, 0, response);
+  free(response);
+  printf("Done...\n");
 }
 
 /* static void sleep_ms(long ms) { */
@@ -237,14 +269,16 @@ int thread_http(void *arg) {
 
 int thread_window(void *arg) {
   context_t *context = arg;
+  char *js = malloc(8192);
 
-  webview_t w = webview_create(0, NULL);
+  webview_t w = webview_create(1, NULL);
   context->w = w;
   webview_set_title(w, "Basic Example");
   webview_set_size(w, 480, 320, WEBVIEW_HINT_NONE);
-  /* webview_bind(w, "wv_test", wv_test, arg); */
-  /* webview_set_html(w, get_html("control-ui")); */
-  webview_set_html(w, "Hello World");
+
+  webview_bind(w, "homedir", bound_homedir, arg);
+  webview_set_html(w, get_html("control-ui"));
+  /* webview_set_html(w, "Hello World"); */
   webview_run(w);
   webview_destroy(w);
 
@@ -276,11 +310,25 @@ void wv_test(const char *seq, const char *req, void *arg) {
 }
 
 int main() {
+
+  const char *settings_dir_template =
+    "%s"
+    DIRECTORY_SEPARATOR
+    ".config"
+    DIRECTORY_SEPARATOR
+    "finwo"
+    DIRECTORY_SEPARATOR
+    "stream-companion"
+    ;
+
   int i;
   context_t context = {
-    .port     = 3000,
+    .port         = 3000,
+    .settings_dir = calloc(snprintf(NULL, 0, settings_dir_template, homedir()) + 1, 1),
   };
   pthread_t threads[2];
+
+  sprintf(context.settings_dir, settings_dir_template, homedir());
 
   thrd_create(&threads[0], thread_fnet  , NULL    );
   thrd_create(&threads[1], thread_http  , &context);
