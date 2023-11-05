@@ -326,7 +326,7 @@ int main() {
     .port         = 3000,
     .settings_dir = calloc(snprintf(NULL, 0, settings_dir_template, homedir()) + 1, 1),
   };
-  pthread_t threads[2];
+  thrd_t threads[2];
 
   sprintf(context.settings_dir, settings_dir_template, homedir());
 
