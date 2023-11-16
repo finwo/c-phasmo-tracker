@@ -313,9 +313,11 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
   UNUSED(hPrevInst);
   UNUSED(lpCmdLine);
   UNUSED(nCmdShow);
-#else
-int main() {
+  return main();
+}
 #endif
+
+int main() {
 
   const char *settings_dir_template =
     "%s"
