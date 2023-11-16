@@ -281,19 +281,20 @@ int thread_window(void *arg) {
   webview_run(w);
   webview_destroy(w);
 
+  // Mark http as done (else it will restart listening)
   if (context->http_opts) {
     context->http_opts->shutdown = true;
-  } else {
-    fnet_shutdown();
   }
+
+  fnet_shutdown();
   printf("wndw_thread finished\n");
   return 0;
 }
 
-int thread_fnet(void *arg) {
-  fnet_thread();
-  return 0;
-}
+/* int thread_fnet(void *arg) { */
+/*   fnet_thread(); */
+/*   return 0; */
+/* } */
 
 void wv_test(const char *seq, const char *req, void *arg) {
   context_t *context = (context_t *)arg;
@@ -328,13 +329,13 @@ int main() {
 
   sprintf(context.settings_file, settings_file_template, homedir());
 
-  thrd_create(&threads[0], thread_fnet  , NULL    );
+  /* thrd_create(&threads[0], thread_fnet  , NULL    ); */
   thrd_create(&threads[1], thread_http  , &context);
 
   // Launch the window on the main thread
   thread_window(&context);
 
-  for(i = 0; i < 2 ; i++) {
+  for(i = 1; i < 2 ; i++) {
     printf("Joining thread %d\n", i);
     thrd_join(threads[i], NULL);
   }
