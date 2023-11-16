@@ -28,7 +28,7 @@
 
 typedef struct {
   int port;
-  char *settings_dir;
+  char *settings_file;
   struct http_server_opts *http_opts;
   webview_t w;
 } context_t;
@@ -69,16 +69,16 @@ const char * homedir() {
 #endif
 }
 
-void bound_homedir(const char *seq, const char *req, void *arg) {
-  UNUSED(req);
-  context_t *context = arg;
-  JSON_Value *settings_dir = json_value_init_string(context->settings_dir);
-  char *response = json_serialize_to_string_pretty(settings_dir);
-  webview_return(context->w, seq, 0, response);
-  json_free_serialized_string(response);
-  json_value_free(settings_dir);
-  printf("Done...\n");
-}
+/* void bound_homedir(const char *seq, const char *req, void *arg) { */
+/*   UNUSED(req); */
+/*   context_t *context = arg; */
+/*   JSON_Value *settings_file = json_value_init_string(context->settings_file); */
+/*   char *response = json_serialize_to_string_pretty(settings_file); */
+/*   webview_return(context->w, seq, 0, response); */
+/*   json_free_serialized_string(response); */
+/*   json_value_free(settings_file); */
+/*   printf("Done...\n"); */
+/* } */
 
 /* static void sleep_ms(long ms) { */
 /* #if defined(__APPLE__) */
@@ -276,7 +276,7 @@ int thread_window(void *arg) {
   webview_set_title(w, "Basic Example");
   webview_set_size(w, 480, 320, WEBVIEW_HINT_NONE);
 
-  webview_bind(w, "homedir", bound_homedir, arg);
+  /* webview_bind(w, "homedir", bound_homedir, arg); */
   webview_set_html(w, get_html("control-ui"));
   webview_run(w);
   webview_destroy(w);
@@ -307,36 +307,26 @@ void wv_test(const char *seq, const char *req, void *arg) {
   webview_return(context->w, seq, 0, "null");
 }
 
-#ifdef _WIN32
-int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow) {
-  UNUSED(hInst);
-  UNUSED(hPrevInst);
-  UNUSED(lpCmdLine);
-  UNUSED(nCmdShow);
-  return main();
-}
-#endif
-
 int main() {
 
-  const char *settings_dir_template =
+  const char *settings_file_template =
     "%s"
     DIRECTORY_SEPARATOR
     ".config"
     DIRECTORY_SEPARATOR
     "finwo"
     DIRECTORY_SEPARATOR
-    "stream-companion"
+    "stream-companion.json"
     ;
 
   int i;
   context_t context = {
-    .port         = 3000,
-    .settings_dir = calloc(snprintf(NULL, 0, settings_dir_template, homedir()) + 1, 1),
+    .port          = 3000,
+    .settings_file = calloc(snprintf(NULL, 0, settings_file_template, homedir()) + 1, 1),
   };
   thrd_t threads[2];
 
-  sprintf(context.settings_dir, settings_dir_template, homedir());
+  sprintf(context.settings_file, settings_file_template, homedir());
 
   thrd_create(&threads[0], thread_fnet  , NULL    );
   thrd_create(&threads[1], thread_http  , &context);
@@ -352,3 +342,13 @@ int main() {
   printf("Main fn finished\n");
   return 0;
 }
+
+#ifdef _WIN32
+int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow) {
+  UNUSED(hInst);
+  UNUSED(hPrevInst);
+  UNUSED(lpCmdLine);
+  UNUSED(nCmdShow);
+  return main();
+}
+#endif

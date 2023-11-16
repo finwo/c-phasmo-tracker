@@ -18,7 +18,6 @@
   let port    = 3000;
 
   let ctx_str = "Loading...";
-  homedir().then(dir => ctx_str = dir);
 
   function handleSettingsUpdate(e) {
     e.preventDefault();
