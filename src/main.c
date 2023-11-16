@@ -250,7 +250,7 @@ int thread_http(void *arg) {
   struct http_server_opts opts = {
     .evs  = &evs,
     .addr = "0.0.0.0",
-    .port = 8080,
+    .port = context->port,
   };
 
   context->http_opts = &opts;
