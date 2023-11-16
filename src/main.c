@@ -307,7 +307,15 @@ void wv_test(const char *seq, const char *req, void *arg) {
   webview_return(context->w, seq, 0, "null");
 }
 
+#ifdef _WIN32
+int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow) {
+  UNUSED(hInst);
+  UNUSED(hPrevInst);
+  UNUSED(lpCmdLine);
+  UNUSED(nCmdShow);
+#else
 int main() {
+#endif
 
   const char *settings_dir_template =
     "%s"
@@ -342,13 +350,3 @@ int main() {
   printf("Main fn finished\n");
   return 0;
 }
-
-#ifdef _WIN32
-int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow) {
-  UNUSED(hInst);
-  UNUSED(hPrevInst);
-  UNUSED(lpCmdLine);
-  UNUSED(nCmdShow);
-  return main();
-}
-#endif
