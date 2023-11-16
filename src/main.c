@@ -14,6 +14,7 @@
 #include "finwo/fnet.h"
 #include "finwo/http-parser.h"
 #include "finwo/http-server.h"
+#include "kgabis/parson.h"
 #include "tinycthread/tinycthread.h"
 #include "webview/webview.h"
 
@@ -71,12 +72,11 @@ const char * homedir() {
 void bound_homedir(const char *seq, const char *req, void *arg) {
   UNUSED(req);
   context_t *context = arg;
-  char *response = calloc(strlen(context->settings_dir) + 3, 1);
-  strcat(response, "\"");
-  strcat(response, context->settings_dir);
-  strcat(response, "\"");
+  JSON_Value *settings_dir = json_value_init_string(context->settings_dir);
+  char *response = json_serialize_to_string_pretty(settings_dir);
   webview_return(context->w, seq, 0, response);
-  free(response);
+  json_free_serialized_string(response);
+  json_value_free(settings_dir);
   printf("Done...\n");
 }
 
@@ -269,7 +269,7 @@ int thread_http(void *arg) {
 
 int thread_window(void *arg) {
   context_t *context = arg;
-  char *js = malloc(8192);
+  /* char *js = malloc(8192); */
 
   webview_t w = webview_create(1, NULL);
   context->w = w;
@@ -278,7 +278,6 @@ int thread_window(void *arg) {
 
   webview_bind(w, "homedir", bound_homedir, arg);
   webview_set_html(w, get_html("control-ui"));
-  /* webview_set_html(w, "Hello World"); */
   webview_run(w);
   webview_destroy(w);
 
@@ -288,7 +287,6 @@ int thread_window(void *arg) {
     fnet_shutdown();
   }
   printf("wndw_thread finished\n");
-  /* thrd_exit(0); */
   return 0;
 }
 
