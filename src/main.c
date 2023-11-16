@@ -281,6 +281,8 @@ int thread_window(void *arg) {
   webview_run(w);
   webview_destroy(w);
 
+  printf("Window has closed...\n");
+
   // Mark http as done (else it will restart listening)
   if (context->http_opts) {
     context->http_opts->shutdown = true;
