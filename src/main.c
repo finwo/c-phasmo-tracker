@@ -310,7 +310,19 @@ void wv_test(const char *seq, const char *req, void *arg) {
   webview_return(context->w, seq, 0, "null");
 }
 
+#ifndef WINTERM
+#ifdef _WIN32
+int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow) {
+  UNUSED(hInst);
+  UNUSED(hPrevInst);
+  UNUSED(lpCmdLine);
+  UNUSED(nCmdShow);
+#else
 int main() {
+#endif
+#else // no WINTERM
+int main() {
+#endif
 
   const char *settings_file_template =
     "%s"
@@ -346,12 +358,15 @@ int main() {
   return 0;
 }
 
+#ifdef WINTERM
 #ifdef _WIN32
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow) {
   UNUSED(hInst);
   UNUSED(hPrevInst);
   UNUSED(lpCmdLine);
   UNUSED(nCmdShow);
+
   return main();
 }
+#endif
 #endif
