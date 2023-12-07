@@ -1,4 +1,3 @@
-#include <libgen.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +7,7 @@
 #if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
 #else
+#include <libgen.h>
 #include <pwd.h>
 #include <unistd.h>
 #endif
