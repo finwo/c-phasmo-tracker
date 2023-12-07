@@ -1,3 +1,4 @@
+#include <libgen.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,6 +17,7 @@
 #include "finwo/http-server.h"
 #include "kgabis/parson.h"
 #include "tinycthread/tinycthread.h"
+#include "user-none/mkdirp.h"
 #include "webview/webview.h"
 
 #ifndef DIRECTORY_SEPARATOR
@@ -24,6 +26,20 @@
 #else
 #define DIRECTORY_SEPARATOR "/"
 #endif
+#endif
+
+#if defined(_WIN32) || defined(_WIN64)
+// Origin: https://stackoverflow.com/a/21229258
+char *dirname(const char *path) {
+  int maxsize  = strlen(path) + 256;
+  char *dir = calloc(1, maxsize);
+  _splitpath_s(path,
+      NULL, 0,             // Don't need drive
+      dir, maxsize,    // Just the directory
+      NULL, 0,             // Don't need filename
+      NULL, 0);
+  return dir;
+}
 #endif
 
 typedef struct {
@@ -67,6 +83,50 @@ const char * homedir() {
   }
   return response;
 #endif
+}
+
+// Returns bytes written
+ssize_t file_put_contents(const char *filename, const struct buf *data, int flags) {
+  char *dir = NULL;
+  char *dup = NULL;
+
+  // flag 1 = create directory
+  if (flags & 1) {
+    dup = strdup(filename);
+    dir = dirname(dup);
+    free(dup);
+    if (mkdirp(dir) == false) {
+      perror("mkdirp");
+      return -1;
+    }
+  }
+
+  // Actualle open + write + close the file
+  FILE *fd = fopen(filename, "w+");
+  ssize_t written = 0;
+  ssize_t check   = 0;
+  int tries = 3;
+  while((written < (data->len)) && ((tries--) >= 0)) {
+    written += fwrite(
+        data->data + written,
+        1,
+        data->len - written,
+        fd
+    );
+    if (written < check) {
+      fclose(fd);
+      perror("fwrite");
+      return -1;
+    }
+    check = written;
+  }
+  fclose(fd);
+
+  return written;
+}
+
+struct buf * file_get_contents(const char *filename) {
+  return NULL;
 }
 
 /* void bound_homedir(const char *seq, const char *req, void *arg) { */
@@ -339,6 +399,16 @@ int main() {
   sprintf(context.settings_file, settings_file_template, homedir());
 
   printf("Settings file: %s\n", context.settings_file);
+
+  file_put_contents(
+      context.settings_file,
+      &((struct buf){
+        .cap = 4,
+        .len = 3,
+        .data = "{}\n"
+      }),
+      1
+  );
 
   /* thrd_create(&threads[0], thread_fnet  , NULL    ); */
   thrd_create(&threads[1], thread_http  , &context);
