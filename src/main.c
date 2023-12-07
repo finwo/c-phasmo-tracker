@@ -293,11 +293,6 @@ int thread_window(void *arg) {
   return 0;
 }
 
-/* int thread_fnet(void *arg) { */
-/*   fnet_thread(); */
-/*   return 0; */
-/* } */
-
 void wv_test(const char *seq, const char *req, void *arg) {
   context_t *context = (context_t *)arg;
   UNUSED(seq);
@@ -342,6 +337,8 @@ int main() {
   thrd_t threads[2];
 
   sprintf(context.settings_file, settings_file_template, homedir());
+
+  printf("Settings file: %s\n", context.settings_file);
 
   /* thrd_create(&threads[0], thread_fnet  , NULL    ); */
   thrd_create(&threads[1], thread_http  , &context);

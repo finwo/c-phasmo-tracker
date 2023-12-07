@@ -49,6 +49,7 @@ else
     ifneq ($(filter arm%,$(UNAME_P)),)
         # CFLAGS += -D ARM
     endif
+    # TODO: flags for riscv
 endif
 
 include lib/.dep/config.mk
