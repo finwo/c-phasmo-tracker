@@ -25,6 +25,14 @@ const config = {
   outdir: __dirname + '/dist',
   entryPoints: Object.values(entryPoints),
   minify: false,
+  loader: {
+    '.eot'  : 'file',
+    '.html' : 'text',
+    '.svg'  : 'file',
+    '.ttf'  : 'file',
+    '.woff' : 'file',
+    '.woff2': 'file',
+  },
   plugins: [
     esbuildSvelte({
       preprocess: preprocess(),

@@ -1,7 +1,28 @@
-import App from './app.svelte';
+import 'onsenui/css/onsenui.css';
+import 'onsenui/css/onsen-css-components.css';
+import 'onsenui/js/onsenui.js'
+import tmpl from "./app.html"
+document.body.innerHTML = tmpl;
 
-const root = (new Function('return this;'))();
+window.fn = {};
 
-new App({
-  target : document.body,
-});
+window.fn.toggleMenu = function () {
+  document.getElementById('appSplitter').right.toggle();
+};
+
+window.fn.loadView = function (index) {
+  document.getElementById('appTabbar').setActiveTab(index);
+  document.getElementById('sidemenu').close();
+};
+
+window.fn.loadLink = function (url) {
+  window.open(url, '_blank');
+};
+
+window.fn.pushPage = function (page, anim) {
+  if (anim) {
+    document.getElementById('appNavigator').pushPage(page.id, { data: { title: page.title }, animation: anim });
+  } else {
+    document.getElementById('appNavigator').pushPage(page.id, { data: { title: page.title } });
+  }
+};

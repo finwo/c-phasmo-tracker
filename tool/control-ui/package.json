@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "node esbuild.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "watch": "bash watch.sh"
   },
   "author": "",
   "license": "ISC",
@@ -13,6 +13,7 @@
     "esbuild": "^0.19.5",
     "esbuild-svelte": "^0.8.0",
     "fast-glob": "^3.3.1",
+    "onsenui": "^2.12.8",
     "svelte": "^4.2.2",
     "svelte-preprocess": "^5.0.4"
   }
