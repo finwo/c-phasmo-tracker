@@ -26,12 +26,12 @@ const config = {
   entryPoints: Object.values(entryPoints),
   minify: false,
   loader: {
-    '.eot'  : 'file',
+    '.eot'  : 'dataurl',
     '.html' : 'text',
-    '.svg'  : 'file',
-    '.ttf'  : 'file',
-    '.woff' : 'file',
-    '.woff2': 'file',
+    '.svg'  : 'dataurl',
+    '.ttf'  : 'dataurl',
+    '.woff' : 'dataurl',
+    '.woff2': 'dataurl',
   },
   plugins: [
     esbuildSvelte({

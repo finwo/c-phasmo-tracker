@@ -334,7 +334,7 @@ int thread_window(void *arg) {
   webview_t w = webview_create(1, NULL);
   context->w = w;
   webview_set_title(w, "Basic Example");
-  webview_set_size(w, 480, 320, WEBVIEW_HINT_NONE);
+  webview_set_size(w, 480, 720, WEBVIEW_HINT_NONE);
 
   /* webview_bind(w, "homedir", bound_homedir, arg); */
   webview_set_html(w, get_html("control-ui"));
@@ -391,7 +391,7 @@ int main() {
 
   int i;
   context_t context = {
-    .port          = 3000,
+    .port          = 38475,
     .settings_file = calloc(snprintf(NULL, 0, settings_file_template, homedir()) + 1, 1),
   };
   thrd_t threads[2];
