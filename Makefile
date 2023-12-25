@@ -10,6 +10,7 @@ SRC+=$(wildcard src/*.c)
 INCLUDES:=
 
 override CFLAGS?=-Wall -O2
+override CFLAGS+=-I src
 
 override CPPFLAGS?=
 override CPPFLAGS+=-lstdc++

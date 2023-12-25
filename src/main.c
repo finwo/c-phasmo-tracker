@@ -17,8 +17,9 @@
 #include "finwo/http-server.h"
 #include "kgabis/parson.h"
 #include "tinycthread/tinycthread.h"
-#include "user-none/mkdirp.h"
 #include "webview/webview.h"
+
+#include "fs.h"
 
 #ifndef DIRECTORY_SEPARATOR
 #if defined(_WIN32) || defined(_WIN64)
@@ -26,20 +27,6 @@
 #else
 #define DIRECTORY_SEPARATOR "/"
 #endif
-#endif
-
-#if defined(_WIN32) || defined(_WIN64)
-// Origin: https://stackoverflow.com/a/21229258
-char *dirname(const char *path) {
-  int maxsize  = strlen(path) + 256;
-  char *dir = calloc(1, maxsize);
-  _splitpath_s(path,
-      NULL, 0,             // Don't need drive
-      dir, maxsize,    // Just the directory
-      NULL, 0,             // Don't need filename
-      NULL, 0);
-  return dir;
-}
 #endif
 
 typedef struct {
@@ -73,60 +60,18 @@ char * get_html(const char *name) {
   return "";
 }
 
-const char * homedir() {
-  const char *response;
-#if defined(_WIN32) || defined(_WIN64)
-  return getenv("USERPROFILE");
-#else
-  if ((response = getenv("HOME")) == NULL) {
-    response = getpwuid(getuid())->pw_dir;
-  }
-  return response;
-#endif
+void bound_getSettings(const char *seq, const char *req, void *arg) {
+  context_t *context = arg;
+  struct buf *settings_contents = file_get_contents(context->settings_file);
+  webview_return(context->w, seq, 0, settings_contents->data);
+  buf_clear(settings_contents);
+  free(settings_contents);
 }
 
-// Returns bytes written
-ssize_t file_put_contents(const char *filename, const struct buf *data, int flags) {
-  char *dir = NULL;
-  char *dup = NULL;
-
-  // flag 1 = create directory
-  if (flags & 1) {
-    dup = strdup(filename);
-    dir = dirname(dup);
-    free(dup);
-    if (mkdirp(dir) == false) {
-      perror("mkdirp");
-      return -1;
-    }
-  }
-
-  // Actualle open + write + close the file
-  FILE *fd = fopen(filename, "w+");
-  ssize_t written = 0;
-  ssize_t check   = 0;
-  int tries = 3;
-  while((written < (data->len)) && ((tries--) >= 0)) {
-    written += fwrite(
-        data->data + written,
-        1,
-        data->len - written,
-        fd
-    );
-    if (written < check) {
-      fclose(fd);
-      perror("fwrite");
-      return -1;
-    }
-    check = written;
-  }
-  fclose(fd);
-
-  return written;
-}
-
-struct buf * file_get_contents(const char *filename) {
-  return NULL;
+void bound_setSettings(const char *seq, const char *req, void *arg) {
+  context_t *context = arg;
+  printf("Hello from setSettings\n");
+  webview_return(context->w, seq, 0, "null");
 }
 
 /* void bound_homedir(const char *seq, const char *req, void *arg) { */
@@ -336,7 +281,8 @@ int thread_window(void *arg) {
   webview_set_title(w, "Basic Example");
   webview_set_size(w, 480, 720, WEBVIEW_HINT_NONE);
 
-  /* webview_bind(w, "homedir", bound_homedir, arg); */
+  webview_bind(w, "_getSettings", bound_getSettings, arg);
+  webview_bind(w, "_setSettings", bound_setSettings, arg);
   webview_set_html(w, get_html("control-ui"));
   webview_run(w);
   webview_destroy(w);
@@ -398,17 +344,6 @@ int main() {
 
   sprintf(context.settings_file, settings_file_template, homedir());
 
-  printf("Settings file: %s\n", context.settings_file);
-
-  file_put_contents(
-      context.settings_file,
-      &((struct buf){
-        .cap = 4,
-        .len = 3,
-        .data = "{}\n"
-      }),
-      1
-  );
 
   /* thrd_create(&threads[0], thread_fnet  , NULL    ); */
   thrd_create(&threads[1], thread_http  , &context);

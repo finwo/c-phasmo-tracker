@@ -72,3 +72,11 @@ window.fn.pushPage = function (page, anim) {
     document.getElementById('appNavigator').pushPage(page.id, { data: { title: page.title } });
   }
 };
+
+if (window._getSettings) {
+  window._getSettings().then(data => console.log('getSettings done', data));
+}
+
+if (window._setSettings) {
+  window._setSettings().then(() => console.log('setSettings done'));
+}
