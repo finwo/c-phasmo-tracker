@@ -80,6 +80,8 @@ esbuild
 </html>
 `);
 
+    console.log(fs.readFileSync(config.outdir + `/index.bundled.html`, 'utf-8'));
+
   })
 
 
