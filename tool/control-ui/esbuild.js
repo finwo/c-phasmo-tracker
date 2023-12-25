@@ -3,7 +3,6 @@
 const fs      = require('fs');
 const esbuild = require('esbuild');
 const glob    = require('fast-glob');
-const { EOL } = require("os");
 
 const entryPoints = glob.sync('./src/main.ts')
   .sort()
@@ -58,10 +57,10 @@ esbuild
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <style>* { box-sizing: border-box; }</style>
-    ${styles.map(name => `<link rel="stylesheet" href="${name}"/>`).join(`${EOL}    `)}
+    ${styles.map(name => `<link rel="stylesheet" href="${name}"/>`).join('\n    ')}
   </head>
   <body>
-    ${buildList.map(name => `<script defer src="${name}"></script>`).join(`${EOL}    `)}
+    ${buildList.map(name => `<script defer src="${name}"></script>`).join('\n    ')}
   </body>
 </html>
 `);
@@ -72,15 +71,13 @@ esbuild
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <style>* { box-sizing: border-box; }</style>
-    ${styles.map(path => `<style type="text/css">${fs.readFileSync(`${config.outdir}/${path}`,'utf-8')}</style>`).join(`${EOL}    `)}
+    ${styles.map(path => `<style type="text/css">${fs.readFileSync(`${config.outdir}/${path}`,'utf-8')}</style>`).join('\n    ')}
   </head>
   <body>
-    ${buildList.map(path => `<script type="text/javascript">${fs.readFileSync(`${config.outdir}/${path}`,'utf-8').split("\r\n").join("\n").split("\r").join("\n").split("\n").join(EOL)}</script>`).join(`${EOL}    `)}
+    ${buildList.map(path => `<script type="text/javascript">${fs.readFileSync(`${config.outdir}/${path}`,'utf-8')}</script>`).join('\n    ')}
   </body>
 </html>
 `);
-
-    console.log(fs.readFileSync(config.outdir + `/index.bundled.html`, 'utf-8'));
 
   })
 
