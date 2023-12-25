@@ -11,10 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "esbuild": "^0.19.5",
-    "esbuild-svelte": "^0.8.0",
     "fast-glob": "^3.3.1",
-    "onsenui": "^2.12.8",
-    "svelte": "^4.2.2",
-    "svelte-preprocess": "^5.0.4"
+    "onsenui": "^2.12.8"
   }
 }

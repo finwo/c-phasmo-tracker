@@ -2,8 +2,6 @@
 
 const fs            = require('fs');
 const esbuild       = require('esbuild');
-const esbuildSvelte = require('esbuild-svelte');
-const preprocess    = require('svelte-preprocess');
 const glob          = require('fast-glob');
 
 const entryPoints = glob.sync('./src/main.ts')
@@ -20,7 +18,7 @@ const entryPoints = glob.sync('./src/main.ts')
 const config = {
   format: 'cjs',
   target: ['chrome108','firefox107'],
-  mainFields: ['svelte','browser','module','main'],
+  mainFields: ['browser','module','main'],
   bundle: true,
   outdir: __dirname + '/dist',
   entryPoints: Object.values(entryPoints),
@@ -32,12 +30,7 @@ const config = {
     '.ttf'  : 'dataurl',
     '.woff' : 'dataurl',
     '.woff2': 'dataurl',
-  },
-  plugins: [
-    esbuildSvelte({
-      preprocess: preprocess(),
-    }),
-  ],
+  }
 };
 
 const buildList = [];
