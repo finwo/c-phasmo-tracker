@@ -8,8 +8,6 @@
   </ons-tabbar>
 
   <script>
-    console.log("Hello from tabbar??");
-
     ons.getScriptPage().addEventListener('prechange', function(event) {
       if (event.target.matches('#appTabbar')) {
         event.currentTarget.querySelector('ons-toolbar .center').innerHTML = event.tabItem.getAttribute('label');

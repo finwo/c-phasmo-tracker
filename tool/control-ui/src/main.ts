@@ -74,9 +74,9 @@ window.fn.pushPage = function (page, anim) {
 };
 
 if (window._getSettings) {
-  window._getSettings().then(data => console.log('getSettings done', data));
+  window._getSettings().then(data => console.log('getSettings done', JSON.stringify(data, null, 2)));
 }
 
 if (window._setSettings) {
-  window._setSettings().then(() => console.log('setSettings done'));
+  window._setSettings({ foo: 'bar' }).then(() => console.log('setSettings done'));
 }

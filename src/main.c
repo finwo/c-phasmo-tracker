@@ -70,7 +70,22 @@ void bound_getSettings(const char *seq, const char *req, void *arg) {
 
 void bound_setSettings(const char *seq, const char *req, void *arg) {
   context_t *context = arg;
-  printf("Hello from setSettings\n");
+
+  JSON_Value *req_parsed = json_parse_string(req);
+  if (json_value_get_type(req_parsed) != JSONArray) {
+    webview_return(context->w, seq, 1, "new Error('Call error')");
+    json_value_free(req_parsed);
+    return;
+  }
+
+  JSON_Value *req_i0 = json_array_get_value(json_array(req_parsed), 0);
+  if (json_value_get_type(req_i0) != JSONObject) {
+    json_value_free(req_parsed);
+    webview_return(context->w, seq, 1, "new Error('Passed settings must be an object')");
+    return;
+  }
+
+  json_serialize_to_file_pretty(req_i0, context->settings_file);
   webview_return(context->w, seq, 0, "null");
 }
 
