@@ -100,21 +100,6 @@ void bound_setSettings(const char *seq, const char *req, void *arg) {
 /*   printf("Done...\n"); */
 /* } */
 
-/* static void sleep_ms(long ms) { */
-/* #if defined(__APPLE__) */
-/*     usleep(ms * 1000); */
-/* #elif defined(_WIN32) || defined(_WIN64) */
-/*     Sleep(ms); */
-/* #else */
-/*     time_t sec = (int)(ms / 1000); */
-/*     const long t = ms -(sec * 1000); */
-/*     struct timespec req; */
-/*     req.tv_sec = sec; */
-/*     req.tv_nsec = t * 1000000L; */
-/*     while(-1 == nanosleep(&req, &req)); */
-/* #endif */
-/* } */
-
 void wv_test(const char *seq, const char *req, void *arg);
 
 void onServing(char *addr, uint16_t port, void *udata) {
@@ -144,6 +129,9 @@ void route_get_html(struct http_server_reqdata *reqdata, const char *name) {
   http_server_response_send(reqdata, true);
 }
 
+void route_get_control_ui(struct http_server_reqdata *reqdata) {
+  route_get_html(reqdata, "control-ui");
+}
 void route_get_overlay_phasmo_tracker(struct http_server_reqdata *reqdata) {
   route_get_html(reqdata, "overlay-phasmo-tracker");
 }
@@ -275,9 +263,10 @@ int thread_http(void *arg) {
 
   context->http_opts = &opts;
 
+  http_server_route("GET" , "/control-ui"            , route_get_control_ui            );
   http_server_route("GET" , "/overlay/phasmo-tracker", route_get_overlay_phasmo_tracker);
-  http_server_route("GET" , "/topic/chat"            , route_get_topic_chat);
-  http_server_route("POST", "/topic/chat"            , route_post_topic_chat);
+  http_server_route("GET" , "/topic/chat"            , route_get_topic_chat            );
+  http_server_route("POST", "/topic/chat"            , route_post_topic_chat           );
   http_server_main(&opts);
   printf("http server has shut down\n");
   fnet_shutdown();
@@ -296,9 +285,10 @@ int thread_window(void *arg) {
   webview_set_title(w, "Basic Example");
   webview_set_size(w, 480, 720, WEBVIEW_HINT_NONE);
 
+  webview_eval(w, "document.location.href = 'http://localhost:38475/control-ui';");
   webview_bind(w, "_getSettings", bound_getSettings, arg);
   webview_bind(w, "_setSettings", bound_setSettings, arg);
-  webview_set_html(w, get_html("control-ui"));
+  /* webview_set_html(w, get_html("control-ui")); */
   webview_run(w);
   webview_destroy(w);
 

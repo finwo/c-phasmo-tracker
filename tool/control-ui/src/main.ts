@@ -94,3 +94,5 @@ appendHTML(document.body, `<h1>Hello World!!</h1>`);
 //     });
 //   }
 // };
+
+console.log(typeof _getSettings);
