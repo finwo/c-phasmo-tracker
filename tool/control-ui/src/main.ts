@@ -82,10 +82,13 @@ window.appSettings = {
       const allSettings = await _getSettings();
       resolve((allSettings||{}).channel || '');
     });
-  }
+  },
   set channel(value) {
-    const allSettings = await _getSettings();
-    allSettings.channel = value;
-    _setSettings(allSettings);
+    return new Promise(async resolve => {
+      const allSettings = await _getSettings();
+      allSettings.channel = value;
+      _setSettings(allSettings);
+      resolve();
+    });
   }
 };
