@@ -1,9 +1,9 @@
-import 'onsenui/css/onsenui.css';
-import 'onsenui/css/onsen-css-components.css';
+// import 'onsenui/css/onsenui.css';
+// import 'onsenui/css/onsen-css-components.css';
 
-// Make it global
-import ons from 'onsenui/js/onsenui.js';
-window.ons = ons;
+// // Make it global
+// import ons from 'onsenui/js/onsenui.js';
+// window.ons = ons;
 
 function replaceScripts(subject) {
   const queue = [subject];
