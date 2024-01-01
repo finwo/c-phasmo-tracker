@@ -1,8 +1,13 @@
 #!/usr/bin/env node
 
-const fs      = require('fs');
-const esbuild = require('esbuild');
-const glob    = require('fast-glob');
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+import fs         from 'fs';
+import esbuild    from 'esbuild';
+import glob       from 'fast-glob';
 
 const entryPoints = glob.sync('./src/main.ts')
   .sort()
@@ -30,7 +35,7 @@ const config = {
     '.ttf'  : 'dataurl',
     '.woff' : 'dataurl',
     '.woff2': 'dataurl',
-  }
+  },
 };
 
 const buildList = [];

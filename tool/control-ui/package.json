@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "node esbuild.js",
+    "build": "node esbuild.mjs",
     "watch": "bash watch.sh"
   },
   "author": "",
@@ -12,6 +12,7 @@
   "dependencies": {
     "esbuild": "^0.19.5",
     "fast-glob": "^3.3.1",
+    "jsdom": "^23.0.1",
     "onsenui": "^2.12.8"
   }
 }

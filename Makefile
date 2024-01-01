@@ -13,13 +13,13 @@ override CFLAGS?=-Wall -O2
 override CFLAGS+=-I src
 
 override CPPFLAGS?=
-override CPPFLAGS+=-lstdc++
 
 override CFLAGS+=-D WEBVIEW_STATIC
 override CFLAGS+=-D WINTERM
 
 ifeq ($(OS),Windows_NT)
     # CFLAGS += -D WIN32
+    override CPPFLAGS+=-lstdc++
     override CPPFLAGS+=-I external/libs/Microsoft.Web.WebView2.1.0.1150.38/build/native/include
     ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
         # CFLAGS += -D AMD64
@@ -35,10 +35,15 @@ else
     UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Linux)
         # CFLAGS += -D LINUX
+        override CPPFLAGS+=-lstdc++
         override CFLAGS+=$(shell pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0 glib-2.0)
+        override CFLAGS+=-D _GNU_SOURCE
     endif
     ifeq ($(UNAME_S),Darwin)
         # CFLAGS += -D OSX
+        override CPPFLAGS+=-std=c++14
+        override CFLAGS+=-I /usr/local/include/libepoll-shim/
+        override CFLAGS+=-D _BSD_SOURCE
     endif
     UNAME_P := $(shell uname -p)
     ifeq ($(UNAME_P),x86_64)

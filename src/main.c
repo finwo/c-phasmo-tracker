@@ -239,7 +239,7 @@ void route_post_topic(struct http_server_reqdata *reqdata, const char *topic) {
   http_parser_header_set(response, "Content-Type"                , "application/json"   );
   http_parser_header_set(response, "Access-Control-Allow-Origin" , origin ? origin : "*");
   response->body       = calloc(1, sizeof(struct buf));
-  response->body->data = strdup("{\"ok\":true}");
+  response->body->data = strdup("{\"ok\":true}\n");
   response->body->len  = strlen(response->body->data);
   response->body->cap  = response->body->len + 1;
 

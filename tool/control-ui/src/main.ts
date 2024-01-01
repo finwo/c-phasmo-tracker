@@ -1,8 +1,9 @@
-console.log('Hello from main ts?');
-
 import 'onsenui/css/onsenui.css';
 import 'onsenui/css/onsen-css-components.css';
-import 'onsenui/js/onsenui.js'
+
+// Make it global
+import ons from 'onsenui/js/onsenui.js';
+window.ons = ons;
 
 function replaceScripts(subject) {
   const queue = [subject];
@@ -75,12 +76,16 @@ window.fn.pushPage = function (page, anim) {
   }
 };
 
-if (window._getSettings) {
-  window._getSettings().then(data => console.log('getSettings done', JSON.stringify(data, null, 2)));
-}
-
-if (window._setSettings) {
-  window._setSettings({ foo: 'bar' }).then(() => console.log('setSettings done'));
-}
-
-console.log('I\'m a survivor!!!');
+window.appSettings = {
+  get channel() {
+    return new Promise(async resolve => {
+      const allSettings = await _getSettings();
+      resolve((allSettings||{}).channel || '');
+    });
+  }
+  set channel(value) {
+    const allSettings = await _getSettings();
+    allSettings.channel = value;
+    _setSettings(allSettings);
+  }
+};
