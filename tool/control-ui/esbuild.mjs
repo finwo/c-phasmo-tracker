@@ -61,7 +61,6 @@ esbuild
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <style>* { box-sizing: border-box; }</style>
     ${styles.map(name => `<link rel="stylesheet" href="${name}"/>`).join('\n    ')}
   </head>
   <body>
@@ -75,7 +74,6 @@ esbuild
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <style>* { box-sizing: border-box; }</style>
     ${styles.map(path => `<style type="text/css">${fs.readFileSync(`${config.outdir}/${path}`,'utf-8')}</style>`).join('\n    ')}
   </head>
   <body>
