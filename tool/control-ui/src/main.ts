@@ -1,9 +1,9 @@
 import 'onsenui/css/onsenui.css';
-// import 'onsenui/css/onsen-css-components.css';
+import 'onsenui/css/onsen-css-components.css';
 
-// // Make it global
-// import ons from 'onsenui/js/onsenui.js';
-// window.ons = ons;
+// Make it global
+import ons from 'onsenui/js/onsenui.js';
+window.ons = ons;
 
 function replaceScripts(subject) {
   const queue = [subject];
@@ -45,54 +45,50 @@ function appendTemplate(target, html, name) {
   appendHTML(target, `<template id="${name}">${html}</template>`);
 }
 
-appendHTML(document.body, `<h1>Hello World!!</h1>`);
+// Load the main template
+import tmpl_app from "./app.html";
+appendHTML(document.body, tmpl_app);
 
-// // Load the main template
-// import tmpl_app from "./app.html";
-// appendHTML(document.body, tmpl_app);
+import tmpl_tabbar from  "./component/tabbar.html";
+appendTemplate(document.body, tmpl_tabbar, "tabbar.html");
 
-// import tmpl_tabbar from  "./component/tabbar.html";
-// appendTemplate(document.body, tmpl_tabbar, "tabbar.html");
+import tmpl_home from  "./page/home.html";
+appendTemplate(document.body, tmpl_home, "home.html");
 
-// import tmpl_home from  "./page/home.html";
-// appendTemplate(document.body, tmpl_home, "home.html");
+import tmpl_settings from "./page/settings.html";
+appendTemplate(document.body, tmpl_settings, "settings.html");
 
-// import tmpl_settings from "./page/settings.html";
-// appendTemplate(document.body, tmpl_settings, "settings.html");
+window.fn = {};
 
-// window.fn = {};
+window.fn.loadView = function (index) {
+  document.getElementById('appTabbar').setActiveTab(index);
+};
 
-// window.fn.loadView = function (index) {
-//   document.getElementById('appTabbar').setActiveTab(index);
-// };
+window.fn.loadLink = function (url) {
+  window.open(url, '_blank');
+};
 
-// window.fn.loadLink = function (url) {
-//   window.open(url, '_blank');
-// };
+window.fn.pushPage = function (page, anim) {
+  if (anim) {
+    document.getElementById('appNavigator').pushPage(page.id, { data: { title: page.title }, animation: anim });
+  } else {
+    document.getElementById('appNavigator').pushPage(page.id, { data: { title: page.title } });
+  }
+};
 
-// window.fn.pushPage = function (page, anim) {
-//   if (anim) {
-//     document.getElementById('appNavigator').pushPage(page.id, { data: { title: page.title }, animation: anim });
-//   } else {
-//     document.getElementById('appNavigator').pushPage(page.id, { data: { title: page.title } });
-//   }
-// };
-
-// window.appSettings = {
-//   get channel() {
-//     return new Promise(async resolve => {
-//       const allSettings = await _getSettings();
-//       resolve((allSettings||{}).channel || '');
-//     });
-//   },
-//   set channel(value) {
-//     return new Promise(async resolve => {
-//       const allSettings = await _getSettings();
-//       allSettings.channel = value;
-//       _setSettings(allSettings);
-//       resolve();
-//     });
-//   }
-// };
-
-console.log(typeof _getSettings);
+window.appSettings = {
+  get channel() {
+    return new Promise(async resolve => {
+      const allSettings = await _getSettings();
+      resolve((allSettings||{}).channel || '');
+    });
+  },
+  set channel(value) {
+    return new Promise(async resolve => {
+      const allSettings = await _getSettings();
+      allSettings.channel = value;
+      _setSettings(allSettings);
+      resolve();
+    });
+  }
+};
