@@ -83,7 +83,12 @@ $(OBJ): $(headertools)
 tool/bin2c/bin2c:
 	bash -c "cd tool/bin2c && make"
 
-htmltools: $(htmltools)
+tool/client-jerry/dist/index.js:
+	bash -c "cd $$(dirname $$(dirname $@)) && npm i && npm run build"
+
+tool/overlay-chat/dist/index.bundled.html: tool/client-jerry/dist/index.js
+
+htmltools:  $(htmltools)
 $(htmltools):
 	bash -c "cd $$(dirname $$(dirname $@)) && npm i && npm run build"
 
@@ -105,6 +110,7 @@ clean:
 	rm -rf $(BIN)
 	rm -rf $(OBJ)
 	rm -rf tool/conrol-ui/dist
+	rm -rf tool/client-jerry/dist
 	rm -rf tool/overlay-chat/dist
 	rm -rf tool/overlay-phasmo-tracker/dist
 	rm -rf tool/bin2c/bin2c
