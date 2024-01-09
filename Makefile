@@ -70,6 +70,7 @@ override CPPFLAGS+=$(CFLAGS)
 
 htmltools:=
 htmltools+=tool/control-ui/dist/index.bundled.html
+htmltools+=tool/overlay-chat/dist/index.bundled.html
 htmltools+=tool/overlay-phasmo-tracker/dist/index.bundled.html
 
 headertools=$(htmltools:.html=.h)
@@ -104,5 +105,6 @@ clean:
 	rm -rf $(BIN)
 	rm -rf $(OBJ)
 	rm -rf tool/conrol-ui/dist
+	rm -rf tool/overlay-chat/dist
 	rm -rf tool/overlay-phasmo-tracker/dist
 	rm -rf tool/bin2c/bin2c

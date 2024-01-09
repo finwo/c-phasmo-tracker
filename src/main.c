@@ -52,6 +52,11 @@ char * get_html(const char *name) {
 #include "../tool/control-ui/dist/index.bundled.h"
       ;
   }
+  if (!strcmp("overlay-chat", name)) {
+    return
+#include "../tool/overlay-chat/dist/index.bundled.h"
+      ;
+  }
   if (!strcmp("overlay-phasmo-tracker", name)) {
     return
 #include "../tool/overlay-phasmo-tracker/dist/index.bundled.h"
@@ -131,6 +136,9 @@ void route_get_html(struct http_server_reqdata *reqdata, const char *name) {
 
 void route_get_control_ui(struct http_server_reqdata *reqdata) {
   route_get_html(reqdata, "control-ui");
+}
+void route_get_overlay_chat(struct http_server_reqdata *reqdata) {
+  route_get_html(reqdata, "overlay-chat");
 }
 void route_get_overlay_phasmo_tracker(struct http_server_reqdata *reqdata) {
   route_get_html(reqdata, "overlay-phasmo-tracker");
@@ -264,6 +272,7 @@ int thread_http(void *arg) {
   context->http_opts = &opts;
 
   http_server_route("GET" , "/control-ui"            , route_get_control_ui            );
+  http_server_route("GET" , "/overlay/chat"          , route_get_overlay_chat          );
   http_server_route("GET" , "/overlay/phasmo-tracker", route_get_overlay_phasmo_tracker);
   http_server_route("GET" , "/topic/chat"            , route_get_topic_chat            );
   http_server_route("POST", "/topic/chat"            , route_post_topic_chat           );
