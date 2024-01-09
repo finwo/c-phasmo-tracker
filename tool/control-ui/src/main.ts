@@ -90,5 +90,19 @@ window.appSettings = {
       _setSettings(allSettings);
       resolve();
     });
-  }
+  },
+  get oauthToken() {
+    return new Promise(async resolve => {
+      const allSettings = await _getSettings();
+      resolve((allSettings||{}).oauthToken || '');
+    });
+  },
+  set oauthToken(value) {
+    return new Promise(async resolve => {
+      const allSettings = await _getSettings();
+      allSettings.oauthToken = value;
+      _setSettings(allSettings);
+      resolve();
+    });
+  },
 };

@@ -356,7 +356,6 @@ int main() {
     }, 1);
   }
 
-
   /* thrd_create(&threads[0], thread_fnet  , NULL    ); */
   thrd_create(&threads[1], thread_http  , &context);
 

@@ -42,9 +42,16 @@
       (async channelInput => {
         channelInput.value = await appSettings.channel;
         channelInput.addEventListener('input', function() {
-          console.log('Channel changed?');
+          appSettings.channel = channelInput.value;
         });
       })(document.getElementById('channel'));
+
+      (async oauthToken => {
+        oauthToken.value = await appSettings.oauthToken;
+        oauthToken.addEventListener('input', function() {
+          appSettings.oauthToken = oauthToken.value;
+        });
+      })(document.getElementById('oauthToken'));
 
       // var nameInput = document.getElementById('name-input');
       // var searchInput = document.getElementById('search-input');
