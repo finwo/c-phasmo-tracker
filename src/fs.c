@@ -10,6 +10,8 @@
 #include <unistd.h>
 #endif
 
+#include "fs.h"
+
 #include "tidwall/buf.h"
 #include "user-none/mkdirp.h"
 
@@ -100,4 +102,16 @@ struct buf * file_get_contents(const char *filename) {
   free(intermediate);
 
   return output;
+}
+
+bool file_exists(const char *filename, const char *mode) {
+  int m = F_OK;
+  if (mode && strstr(mode, "r")) m |= R_OK;
+  if (mode && strstr(mode, "w")) m |= W_OK;
+  if (mode && strstr(mode, "x")) m |= X_OK;
+
+  if (access(filename, m)) {
+    return false;
+  }
+  return true;
 }
