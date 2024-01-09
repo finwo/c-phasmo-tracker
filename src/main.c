@@ -350,9 +350,9 @@ int main() {
   sprintf(context.settings_file, settings_file_template, homedir());
   if (!file_exists(context.settings_file, "rw")) {
     file_put_contents(context.settings_file, &(struct buf){
-      .cap = 3,
+      .cap  = 3,
       .data = "{}\n",
-      .len = 3
+      .len  = 3
     }, 1);
   }
 

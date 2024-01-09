@@ -1,49 +1,11 @@
 import 'onsenui/css/onsenui.css';
 import 'onsenui/css/onsen-css-components.css';
+import { Client as TwitchClient } from 'tmi.js';
+import { appendHTML, appendTemplate } from './lib/ui.ts';
 
 // Make it global
 import ons from 'onsenui/js/onsenui.js';
 window.ons = ons;
-
-function replaceScripts(subject) {
-  const queue = [subject];
-  while(queue.length) {
-    const element = queue.shift();
-    switch(element.tagName.toLowerCase()) {
-      case 'script':
-        const oldScriptEl = element;
-        const newScriptEl = document.createElement('script');
-        Array.from(oldScriptEl.attributes).forEach(attr => {
-          newScriptEl.setAttribute(attr.name, attr.value);
-        });
-        const scriptText = document.createTextNode(oldScriptEl.innerHTML);
-        newScriptEl.appendChild(scriptText);
-        oldScriptEl.parentNode.replaceChild(newScriptEl, oldScriptEl);
-        break;
-      case 'template':
-        queue.push(...Array.from(element.content.querySelectorAll('template')));
-        queue.push(...Array.from(element.content.querySelectorAll('script')));
-        break;
-      default:
-        queue.push(...Array.from(element.querySelectorAll('template')));
-        queue.push(...Array.from(element.querySelectorAll('script')));
-        break;
-    }
-  }
-}
-
-// Heavily based on https://stackoverflow.com/a/47614491
-function appendHTML(target, html) {
-  const wrapper = document.createElement('div');
-  wrapper.innerHTML = html;
-  replaceScripts(wrapper);
-  Array.from(wrapper.children)
-    .forEach(htmlEl => target.appendChild(htmlEl));
-}
-
-function appendTemplate(target, html, name) {
-  appendHTML(target, `<template id="${name}">${html}</template>`);
-}
 
 // Load the main template
 import tmpl_app from "./app.html";
@@ -106,3 +68,35 @@ window.appSettings = {
     });
   },
 };
+
+(async () => {
+  const twitchClient = new TwitchClient({
+    connection: {
+      secure    : true,
+      reconnect : true,
+    },
+    identity: {
+      username: await appSettings.channel,
+      password: await appSettings.oauthToken,
+    },
+    channels: [await appSettings.channel],
+  });
+
+  twitchClient.connect();
+
+  twitchClient.on('message', (channel, tags, message, self) => {
+    if (self) return;
+    fetch("/topic/chat", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        channel,
+        tags,
+        message,
+      }),
+    });
+  });
+})();
+

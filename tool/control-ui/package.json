@@ -12,6 +12,7 @@
   "dependencies": {
     "esbuild": "^0.19.5",
     "fast-glob": "^3.3.1",
-    "onsenui": "^2.12.8"
+    "onsenui": "^2.12.8",
+    "tmi.js": "^1.8.5"
   }
 }
