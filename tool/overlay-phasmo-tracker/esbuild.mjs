@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 
-const fs            = require('fs');
-const esbuild       = require('esbuild');
-const esbuildSvelte = require('esbuild-svelte');
-const preprocess    = require('svelte-preprocess');
-const glob          = require('fast-glob');
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+import fs         from 'fs';
+import esbuild    from 'esbuild';
+import glob       from 'fast-glob';
 
 const entryPoints = glob.sync('./src/main.ts')
   .sort()
@@ -20,16 +23,19 @@ const entryPoints = glob.sync('./src/main.ts')
 const config = {
   format: 'cjs',
   target: ['chrome108','firefox107'],
-  mainFields: ['svelte','browser','module','main'],
+  mainFields: ['browser','module','main'],
   bundle: true,
   outdir: __dirname + '/dist',
   entryPoints: Object.values(entryPoints),
   minify: false,
-  plugins: [
-    esbuildSvelte({
-      preprocess: preprocess(),
-    }),
-  ],
+  loader: {
+    '.eot'  : 'dataurl',
+    '.html' : 'text',
+    '.svg'  : 'dataurl',
+    '.ttf'  : 'dataurl',
+    '.woff' : 'dataurl',
+    '.woff2': 'dataurl',
+  },
 };
 
 const buildList = [];
@@ -55,7 +61,6 @@ esbuild
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <style>* { box-sizing: border-box; }</style>
     ${styles.map(name => `<link rel="stylesheet" href="${name}"/>`).join('\n    ')}
   </head>
   <body>
@@ -69,7 +74,6 @@ esbuild
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <style>* { box-sizing: border-box; }</style>
     ${styles.map(path => `<style type="text/css">${fs.readFileSync(`${config.outdir}/${path}`,'utf-8')}</style>`).join('\n    ')}
   </head>
   <body>
@@ -78,8 +82,4 @@ esbuild
 </html>
 `);
 
-  })
-
-
-
-
+  });

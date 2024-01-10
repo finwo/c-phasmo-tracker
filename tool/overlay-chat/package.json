@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "node esbuild.mjs",
-    "watch": "bash watch.sh"
+    "watch": "npm run build ; bash watch.sh"
   },
   "keywords": [],
   "author": "",
