@@ -19,7 +19,7 @@ const day    = 24 * hour;
 const styleEl = document.createElement('STYLE');
 styleEl.innerHTML = `
 body {
-  font-size: 2vh;
+  font-size: 3vh;
   font-weight: 700;
   font-family: 'Roboto', sans-serif;
 }
@@ -30,7 +30,7 @@ body {
 }
 img.emote {
   display: inline-block;
-  height: 4vh;
+  height: 5vh;
 }
 `;
 document.head.appendChild(styleEl);
