@@ -38,36 +38,17 @@ window.fn.pushPage = function (page, anim) {
   }
 };
 
-window.appSettings = {
-  get channel() {
-    return new Promise(async resolve => {
-      const allSettings = await _getSettings();
-      resolve((allSettings||{}).channel || '');
-    });
+window.appSettings = new Proxy({}, {
+  async get(target, prop, receiver) {
+    const allSettings = await _getSettings();
+    return (allSettings||{})[prop] || '';
   },
-  set channel(value) {
-    return new Promise(async resolve => {
-      const allSettings = await _getSettings();
-      allSettings.channel = value;
-      _setSettings(allSettings);
-      resolve();
-    });
+  async set(obj, prop, value) {
+    const allSettings = await _getSettings();
+    allSettings[prop] = value;
+    _setSettings(allSettings);
   },
-  get oauthToken() {
-    return new Promise(async resolve => {
-      const allSettings = await _getSettings();
-      resolve((allSettings||{}).oauthToken || '');
-    });
-  },
-  set oauthToken(value) {
-    return new Promise(async resolve => {
-      const allSettings = await _getSettings();
-      allSettings.oauthToken = value;
-      _setSettings(allSettings);
-      resolve();
-    });
-  },
-};
+});
 
 (async () => {
   const twitchClient = new TwitchClient({
