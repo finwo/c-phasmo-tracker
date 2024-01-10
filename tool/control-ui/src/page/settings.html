@@ -9,6 +9,15 @@
 
     <ons-list-item class="input-items">
       <div class="left">
+        <ons-icon icon="ion-ios-person" class="list-item__icon"></ons-icon>
+      </div>
+      <label class="center">
+        <ons-input id="username" float maxlength="20" placeholder="Username"></ons-input>
+      </label>
+    </ons-list-item>
+
+    <ons-list-item class="input-items">
+      <div class="left">
         <ons-icon icon="ion-ios-videocam" class="list-item__icon"></ons-icon>
       </div>
       <label class="center">
@@ -38,6 +47,13 @@
             inputItems[i].setAttribute('modifier', 'nodivider');
         }
       }
+
+      (async usernameInput => {
+        usernameInput.value = await appSettings.username;
+        usernameInput.addEventListener('input', function() {
+          appSettings.username = usernameInput.value;
+        });
+      })(document.getElementById('username'));
 
       (async channelInput => {
         channelInput.value = await appSettings.channel;
