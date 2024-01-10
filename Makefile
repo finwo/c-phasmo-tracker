@@ -16,7 +16,7 @@ override LDFLAGS?=
 override CPPFLAGS?=
 
 override CFLAGS+=-D WEBVIEW_STATIC
-override CFLAGS+=-D WINTERM
+# override CFLAGS+=-D WINTERM
 
 ifeq ($(OS),Windows_NT)
     # CFLAGS += -D WIN32
