@@ -45,3 +45,7 @@ html,body {
 [onclick] {
   cursor: pointer !important;
 }
+
+.list-item__center ons-input {
+  width: 100%;
+}

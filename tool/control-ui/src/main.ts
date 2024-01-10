@@ -50,11 +50,20 @@ window.appSettings = new Proxy({}, {
     const allSettings = await _getSettings();
     allSettings[prop] = value;
     _setSettings(allSettings);
+
+    // Re-initialize twitch client
+    if (['username', 'channel', 'oauthToken'].includes(prop)) {
+      initTwitchClient();
+    }
   },
 });
 
-(async () => {
-  const twitchClient = new TwitchClient({
+async function initTwitchClient() {
+  if (window.twitchClient) {
+    window.twitchClient.disconnect();
+  }
+
+  window.twitchClient = new TwitchClient({
     connection: {
       secure    : true,
       reconnect : true,
@@ -65,8 +74,6 @@ window.appSettings = new Proxy({}, {
     },
     channels: [(await appSettings.channel) || (await appSettings.username)],
   });
-
-  twitchClient.connect();
 
   twitchClient.on('message', (channel, tags, message, self) => {
     if (self) return;
@@ -82,5 +89,9 @@ window.appSettings = new Proxy({}, {
       }),
     });
   });
-})();
+
+  twitchClient.connect();
+}
+window.twitchClient = null;
+initTwitchClient();
 
