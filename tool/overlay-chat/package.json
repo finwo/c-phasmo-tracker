@@ -13,6 +13,7 @@
   "dependencies": {
     "buffer": "^6.0.3",
     "esbuild": "^0.19.5",
-    "fast-glob": "^3.3.1"
+    "fast-glob": "^3.3.1",
+    "notify-sl": "^3.3.2"
   }
 }
