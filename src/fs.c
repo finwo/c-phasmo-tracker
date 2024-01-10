@@ -105,7 +105,11 @@ struct buf * file_get_contents(const char *filename) {
 }
 
 bool file_exists(const char *filename, const char *mode) {
+#if defined(_WIN32) || defined(_WIN64)
+  int m = 0;
+#else
   int m = F_OK;
+#endif
   if (mode && strstr(mode, "r")) m |= R_OK;
   if (mode && strstr(mode, "w")) m |= W_OK;
   if (mode && strstr(mode, "x")) m |= X_OK;
