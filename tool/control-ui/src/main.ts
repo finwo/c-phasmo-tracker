@@ -20,6 +20,9 @@ appendTemplate(document.body, tmpl_home, "home.html");
 import tmpl_settings from "./page/settings.html";
 appendTemplate(document.body, tmpl_settings, "settings.html");
 
+import tmpl_settings_overlay_chat from "./page/overlay-chat-settings.html";
+appendTemplate(document.body, tmpl_settings_overlay_chat, "overlay-chat-settings.html");
+
 window.fn = {};
 
 window.fn.loadView = function (index) {
@@ -57,10 +60,10 @@ window.appSettings = new Proxy({}, {
       reconnect : true,
     },
     identity: {
-      username: await appSettings.channel,
+      username: (await appSettings.username) || (await appSettings.channel),
       password: await appSettings.oauthToken,
     },
-    channels: [await appSettings.channel],
+    channels: [(await appSettings.channel) || (await appSettings.username)],
   });
 
   twitchClient.connect();

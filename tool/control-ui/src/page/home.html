@@ -4,9 +4,10 @@
     <div class="center">Home</div>
   </ons-toolbar>
 
-  <p class="intro">
-    This is a kitchen soak example that shows off the components of Onsen UI.<br><br>
-  </p>
+  <ons-card onclick="fn.pushPage({'id': 'overlay-chat-settings.html', 'title': 'Chat settings'})">
+    <div class="title">Chat settings</div>
+    <div class="content">Open up settings for the chat overlay</div>
+  </ons-card>
 
   <!-- <ons-card onclick="fn.pushPage({'id': 'pullHook.html', 'title': 'PullHook'})"> -->
   <!--   <div class="title">Pull Hook</div> -->
@@ -45,14 +46,5 @@
       margin-top: 40px;
     }
 
-    ons-card {
-      cursor: pointer;
-      color: #333;
-    }
-
-    .card__title,
-    .card--material__title {
-      font-size: 20px;
-    }
   </style>
 </ons-page>

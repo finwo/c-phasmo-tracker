@@ -27,5 +27,21 @@ p, h1, h2, h3, h4, h5, h6 {
 /* Actual styling */
 
 html,body {
-  font-family: sans-serif;
+  font-family: 'Roboto', sans-serif;
+}
+
+.card__title,
+.card--material__title {
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+}
+
+[onclick] {
+  color: #333;
+}
+
+.back-button,
+.tabbar__button,
+[onclick] {
+  cursor: pointer !important;
 }
