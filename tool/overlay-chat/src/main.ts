@@ -1,5 +1,7 @@
 import { Client } from '../../client-jerry/src/index.ts';
-import * as notifysl from 'notify-sl';
+
+import { Notyf } from 'notyf';
+import 'notyf/notyf.min.css';
 
 const second = 1000;
 const minute = 60 * second;
@@ -19,21 +21,36 @@ const day    = 24 * hour;
 const styleEl = document.createElement('STYLE');
 styleEl.innerHTML = `
 body {
-  font-size: 3vh;
+  font-size: 2vh;
   font-weight: 700;
   font-family: 'Roboto', sans-serif;
-}
-.notify-sl-notification h2 {
-  font-weight: 700;
-  font-family: 'Roboto', sans-serif;
-  text-shadow: 0 0 0 #FFF;
 }
 img.emote {
   display: inline-block;
-  height: 5vh;
+  height: 1.5em;
+  vertical-align: middle;
 }
+span.title {
+  text-shadow: 0 0 0 #FFF;
+}
+/* .notyf__message {
+  vertical-align: middle !important;
+} */
 `;
 document.head.appendChild(styleEl);
+
+const notyf = new Notyf({
+  duration    : 15 * second,
+  ripple      : true,
+  position    : { x: 'right', y: 'bottom' },
+  dismissible : false,
+  types       : [
+    {
+      type       : 'message',
+      background : '#0008',
+    },
+  ],
+});
 
 const client = new Client("/topic/chat");
 client.addListener(async ({channel, tags, message}) => {
@@ -65,35 +82,12 @@ client.addListener(async ({channel, tags, message}) => {
                   messageHtml.substring(emote.end + 1);
   }
 
-  // Build title
-  const elTitle              = document.createElement('h2');
-  elTitle.innerText          = tags['display-name'];
-  elTitle.style.color        = tags['color'] + '80';
-  elTitle.style.marginTop    = 0;
-  elTitle.style.marginBottom = '1vh';
+  // Prepend username in messageHtml
+  messageHtml = `<span class="title" style="color:${tags['color']}90;">${tags['display-name']}</span><br/>` + messageHtml;
 
-  // Build message
-  const elMessage               = document.createElement('p');
-  elMessage.innerHTML           = messageHtml;
-  elMessage.style.marginTop     = '1vh';
-  elMessage.style.marginBottom  = 0;
-  elMessage.style.paddingBottom = 0;
-
-  notifysl.open({
-    animationDuration: notifysl.animationDuration,
-    closeAll         : false,
-    buttons          : false,
-    timeout          : 15 * second,
-    contents         : [
-      elTitle,
-      elMessage,
-    ],
-    style            : {
-      boxShadow  : '',
-      background : '#0008',
-      color      : '#FFF',
-      padding    : '1em',
-    }
+  notyf.open({
+    type    : 'message',
+    message : messageHtml,
   });
 
 });
