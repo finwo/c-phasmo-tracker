@@ -12,19 +12,19 @@ class Client {
     (async function retryer(_: Client, delayIdx: number, delays: number[]) {
       try {
         const response = await fetch(_.endpoint);
-        console.log({ response });
+        // console.log({ response });
         const reader   = response?.body?.getReader();
-        console.log({ reader });
+        // console.log({ reader });
         if (!reader) throw new Error('Invalid Response');
-        console.log('dinges');
+        // console.log('dinges');
         let buffer = Buffer.alloc(0);
-        console.log({ buffer });
+        // console.log({ buffer });
         delayIdx = 0;
 
         for(;;) {
           const { value, done } = await reader.read();
           if (done) break;
-          console.log({ value });
+          // console.log({ value });
           buffer = Buffer.concat([ buffer, Buffer.from(value) ]);
           let idx = buffer.indexOf('\n');
           while(idx >= 0) {
@@ -33,7 +33,7 @@ class Client {
             idx         = buffer.indexOf('\n');
             try {
               const data = JSON.parse(chunk.toString());
-              console.log({ data });
+              // console.log({ data });
               for(const listener of _.listeners) {
                 try {
                   listener(data);
