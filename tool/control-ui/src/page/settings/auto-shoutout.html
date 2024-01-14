@@ -1,0 +1,62 @@
+<ons-page data-title="Auto shoutout">
+
+  <ons-toolbar>
+    <div class="left">
+      <ons-back-button></ons-back-button>
+    </div>
+    <div class="center">Auto shoutout</div>
+  </ons-toolbar>
+
+  <ons-list x-data="asData">
+    <ons-list-item>
+      <label class="center" for="asEnabled">
+        Enabled
+      </label>
+      <div class="right">
+        <ons-switch id="model-switch" input-id="asEnabled" checked="true"></ons-switch>
+      </div>
+    </ons-list-item>
+
+    <ons-list-header>Users</ons-list-header>
+    <ons-list-item class="input-items">
+        <div class="left">
+          <ons-icon icon="md-face" class="list-item__icon"></ons-icon>
+        </div>
+        <label class="center">
+        <ons-input id="asUsername" float maxlength="20" placeholder="Name"></ons-input>
+      </label>
+    </ons-list-item>
+
+    <template x-for="(value, index) in asData.usernames">
+      <ons-list-item>
+        <span x-text="index"></span>: <span x-text="value"></span>
+      </ons-list-item>
+    </template>
+
+  </ons-list>
+
+  <script>
+
+    // TODO: load/update from settings
+    let asData = Alpine.reactive({
+      usernames : ['finwo_'],
+    });
+
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('asData', () => asData);
+    });
+
+    ons.getScriptPage().onInit = function() {
+      // TODO: load from settings
+      const elUsername = document.querySelector('#asUsername input');
+
+      // Adding upon hitting enter
+      elUsername.addEventListener('keyup', ev => {
+        if (ev.key.toLowerCase() != 'enter') return;
+        asData.usernames.push(elUsername.value);
+        elUsername.value = '';
+      });
+    };
+  </script>
+
+</ons-page>

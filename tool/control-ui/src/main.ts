@@ -1,11 +1,14 @@
 import 'onsenui/css/onsenui.css';
 import 'onsenui/css/onsen-css-components.css';
+import Alpine from 'alpinejs';
+import ons from 'onsenui/js/onsenui.js';
+
 import { Client as TwitchClient } from 'tmi.js';
 import { appendHTML, appendTemplate } from './lib/ui.ts';
 
-// Make it global
-import ons from 'onsenui/js/onsenui.js';
-window.ons = ons;
+// Make things global
+window.ons     = ons;
+window.Alpine = Alpine;
 
 // Load the main template
 import tmpl_app from "./app.html";
@@ -20,8 +23,11 @@ appendTemplate(document.body, tmpl_home, "home.html");
 import tmpl_settings from "./page/settings.html";
 appendTemplate(document.body, tmpl_settings, "settings.html");
 
-import tmpl_settings_overlay_chat from "./page/overlay-chat-settings.html";
-appendTemplate(document.body, tmpl_settings_overlay_chat, "overlay-chat-settings.html");
+import tmpl_settings_auto_shoutout from "./page/settings/auto-shoutout.html";
+appendTemplate(document.body, tmpl_settings_auto_shoutout, "settings/auto-shoutout.html");
+
+import tmpl_settings_overlay_chat from "./page/settings/overlay-chat.html";
+appendTemplate(document.body, tmpl_settings_overlay_chat, "settings/overlay-chat.html");
 
 window.fn = {};
 
@@ -92,6 +98,8 @@ async function initTwitchClient() {
 
   twitchClient.connect();
 }
+
+// Kickstart active things
 window.twitchClient = null;
 initTwitchClient();
-
+Alpine.start();

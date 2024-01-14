@@ -94,6 +94,26 @@ void bound_setSettings(const char *seq, const char *req, void *arg) {
   webview_return(context->w, seq, 0, "null");
 }
 
+void route_get_settings(struct http_server_reqdata *reqdata) {
+  struct http_parser_message *request  = reqdata->reqres->request;
+  struct http_parser_message *response = reqdata->reqres->response;
+  context_t                  *context  = reqdata->udata;
+
+  struct buf *settings_contents = file_get_contents(context->settings_file);
+
+  // Build response
+  const char *origin = http_parser_header_get(request, "Origin");
+  response->status = 200;
+  http_parser_header_set(response, "Content-Type"                , "application/json"    );
+  http_parser_header_set(response, "Access-Control-Allow-Origin" , origin ? origin : "*" );
+  response->body = settings_contents;
+  http_server_response_send(reqdata, true);
+}
+
+/* void route_post_settings(struct http_server_reqdata *reqdata) { */
+
+/* } */
+
 /* void bound_homedir(const char *seq, const char *req, void *arg) { */
 /*   UNUSED(req); */
 /*   context_t *context = arg; */
@@ -108,6 +128,7 @@ void bound_setSettings(const char *seq, const char *req, void *arg) {
 void wv_test(const char *seq, const char *req, void *arg);
 
 void onServing(char *addr, uint16_t port, void *udata) {
+  printf("onServing:udata %p\n", udata);
   printf("Serving at %s:%d\n", addr, port);
 }
 
@@ -264,14 +285,19 @@ int thread_http(void *arg) {
     .tick     = NULL,
   };
   struct http_server_opts opts = {
-    .evs  = &evs,
-    .addr = "0.0.0.0",
-    .port = context->port,
+    .evs   = &evs,
+    .addr  = "0.0.0.0",
+    .port  = context->port,
+    .udata = context,
   };
+
+  printf("thread_http:ctx: %p\n", context);
 
   context->http_opts = &opts;
 
   http_server_route("GET" , "/control-ui"            , route_get_control_ui            );
+  http_server_route("GET" , "/config"                , route_get_settings              );
+  /* http_server_route("POST", "/config"                , route_post_settings             ); */
   http_server_route("GET" , "/overlay/chat"          , route_get_overlay_chat          );
   http_server_route("GET" , "/overlay/phasmo-tracker", route_get_overlay_phasmo_tracker);
   http_server_route("GET" , "/topic/chat"            , route_get_topic_chat            );
@@ -355,6 +381,8 @@ int main() {
     .settings_file = calloc(snprintf(NULL, 0, settings_file_template, homedir()) + 1, 1),
   };
   thrd_t threads[2];
+
+  printf("main:context %p\n", &context);
 
   sprintf(context.settings_file, settings_file_template, homedir());
   if (!file_exists(context.settings_file, "rw")) {

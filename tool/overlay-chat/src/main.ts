@@ -54,7 +54,7 @@ const notyf = new Notyf({
 
 const client = new Client("/topic/chat");
 client.addListener(async ({channel, tags, message}) => {
-  console.log(JSON.stringify({channel,tags,message},null,2));
+  // console.log(JSON.stringify({channel,tags,message},null,2));
 
   // Prepping emotes
   const emotes = [];
