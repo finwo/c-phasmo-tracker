@@ -36,6 +36,11 @@ span.title {
 /* .notyf__message {
   vertical-align: middle !important;
 } */
+.notyf__ripple {
+  height: 200%;
+  width: 400%;
+  right: -100%;
+}
 `;
 document.head.appendChild(styleEl);
 
