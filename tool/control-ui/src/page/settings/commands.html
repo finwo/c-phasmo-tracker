@@ -29,29 +29,13 @@
     </ons-list-item>
 
     <template x-for="c in cmds._">
-      <ons-list-item>
-        !<span x-text="c.term"></span>
+      <ons-list-item @click="fn.setCmd(c); fn.pushPage({id: 'settings/command.html', title: 'Command'});">
+        <div class="center">!<span x-text="c.term"></span></div>
+        <div class="right">
+          <ons-button @click.stop="fn.delCmd(c);" modifier="quiet"><ons-icon icon="ion-ios-trash" style="font-size:1.6em;"></ons-icon></ons-button>
+        </div>
       </ons-list-item>
     </template>
-
-
-
-
-    <!-- <ons-list-header>Users</ons-list-header> -->
-    <!-- <ons-list-item class="input-items"> -->
-    <!--     <div class="left"> -->
-    <!--       <ons-icon icon="md-face" class="list-item__icon"></ons-icon> -->
-    <!--     </div> -->
-    <!--     <label class="center"> -->
-    <!--     <ons-input id="asUsername" float maxlength="20" placeholder="Name"></ons-input> -->
-    <!--   </label> -->
-    <!-- </ons-list-item> -->
-
-    <!-- <template x-for="(value, index) in asData.usernames"> -->
-    <!--   <ons-list-item> -->
-    <!--     <span x-text="index"></span>: <span x-text="value"></span> -->
-    <!--   </ons-list-item> -->
-    <!-- </template> -->
 
   </ons-list>
 
@@ -62,7 +46,16 @@
       message : '',
     });
 
-    window.cmds = Alpine.reactive({_:[]});
+    // Setup a bounded config entry
+    window.cmds = Alpine.reactive({l:false,_:[]});
+    (async () => {
+      window.cmds._ = await window.appSettings.commands || [];
+      cmds.l        = true;
+    })();
+    Alpine.effect(() => {
+      if (!cmds.l) return;
+      window.appSettings.commands = window.cmds._;
+    });
 
     window.fn.setCmd = function(meta) {
       if ('boolean' === typeof meta) {
@@ -73,23 +66,16 @@
         window.fn.setCmd(false);
         Object.assign(cmd, meta);
       }
-    }
+    };
+
+    window.fn.delCmd = function(c) {
+      window.cmds._ = window.cmds._.filter(org => c.term !== org.term);
+    };
 
     document.addEventListener('alpine:init', () => {
       Alpine.data('cmd', () => asData);
     });
 
-    // ons.getScriptPage().onInit = function() {
-    //   // TODO: load from settings
-    //   const elUsername = document.querySelector('#asUsername input');
-
-    //   // Adding upon hitting enter
-    //   elUsername.addEventListener('keyup', ev => {
-    //     if (ev.key.toLowerCase() != 'enter') return;
-    //     asData.usernames.push(elUsername.value);
-    //     elUsername.value = '';
-    //   });
-    // };
   </script>
 
 </ons-page>

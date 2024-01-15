@@ -11,7 +11,7 @@
     </div>
     <div class="center">Command</div>
     <div class="right">
-      <ons-button onclick="saveCmd" modifier="quiet" class="button-margin"><ons-icon icon="ion-ios-save" style="font-size:1.6em;"></ons-icon></ons-button>
+      <ons-button onclick="saveCmd()" modifier="quiet" class="button-margin"><ons-icon icon="ion-ios-save" style="font-size:1.6em;"></ons-icon></ons-button>
     </div>
   </ons-toolbar>
 
@@ -22,7 +22,12 @@
         <span class="list-item__icon">!</span>
       </div>
       <label class="center">
-        <ons-input id="cmdTerm" float maxlength="20" placeholder="command (ex. 'so')"></ons-input>
+        <template x-if="cmd.isNew">
+          <ons-input id="cmdTerm" float :value="cmd.term" maxlength="20" placeholder="command (ex. 'so')"></ons-input>
+        </template>
+        <template x-if="!cmd.isNew">
+          <ons-input id="cmdTerm" float :value="cmd.term" maxlength="20" placeholder="command (ex. 'so')" disabled></ons-input>
+        </template>
       </label>
     </ons-list-item>
 
@@ -31,25 +36,9 @@
         <ons-icon icon="ion-ios-send" class="list-item__icon"></ons-icon>
       </div>
       <label class="center">
-        <ons-input id="cmd" float maxlength="20" placeholder="Message"></ons-input>
+        <ons-input id="cmdMessage" float :value="cmd.message" maxlength="200" placeholder="Message"></ons-input>
       </label>
     </ons-list-item>
-
-    <!-- <ons-list-header>Users</ons-list-header> -->
-    <!-- <ons-list-item class="input-items"> -->
-    <!--     <div class="left"> -->
-    <!--       <ons-icon icon="md-face" class="list-item__icon"></ons-icon> -->
-    <!--     </div> -->
-    <!--     <label class="center"> -->
-    <!--     <ons-input id="asUsername" float maxlength="20" placeholder="Name"></ons-input> -->
-    <!--   </label> -->
-    <!-- </ons-list-item> -->
-
-    <!-- <template x-for="(value, index) in asData.usernames"> -->
-    <!--   <ons-list-item> -->
-    <!--     <span x-text="index"></span>: <span x-text="value"></span> -->
-    <!--   </ons-list-item> -->
-    <!-- </template> -->
 
   </ons-list>
 
@@ -58,17 +47,29 @@
   </center>
 
   <script>
-    // ons.getScriptPage().onInit = function() {
-    //   // TODO: load from settings
-    //   const elUsername = document.querySelector('#asUsername input');
 
-    //   // Adding upon hitting enter
-    //   elUsername.addEventListener('keyup', ev => {
-    //     if (ev.key.toLowerCase() != 'enter') return;
-    //     asData.usernames.push(elUsername.value);
-    //     elUsername.value = '';
-    //   });
-    // };
+    function saveCmd() {
+      const elTerm    = document.querySelector('#cmdTerm    input');
+      const elMessage = document.querySelector('#cmdMessage input');
+      cmd.term    = elTerm.value;
+      cmd.message = elMessage.value;
+
+      const oldCmd = cmds._.find(c => c.term == cmd.term);
+      if (oldCmd) {
+        oldCmd.message = cmd.message;
+      } else {
+        cmds._ = [
+          ...cmds._,
+          {
+            term   : cmd.term,
+            message: cmd.message,
+          },
+        ];
+      }
+
+      const elButton = document.querySelector('.back-button');
+      elButton.click();
+    }
   </script>
 
 </ons-page>

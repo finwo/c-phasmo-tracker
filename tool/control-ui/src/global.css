@@ -49,7 +49,7 @@ ons-switch,
 }
 
 .toolbar .back-button__label {
-  line-height: calc(var(--toolbar-height) * 1.2);
+  line-height: calc(var(--toolbar-height) * 1.15);
 }
 
 .list-item__center ons-input {
@@ -61,4 +61,8 @@ ons-page .page__content > p {
 }
 ons-page .page__content > :first-child {
   margin-top: 1em;
+}
+
+[disabled] * {
+  opacity: 1 !important;
 }
