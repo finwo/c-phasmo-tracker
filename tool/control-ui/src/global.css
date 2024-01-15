@@ -55,3 +55,10 @@ ons-switch,
 .list-item__center ons-input {
   width: 100%;
 }
+
+ons-page .page__content > p {
+  padding: 0 1em;
+}
+ons-page .page__content > :first-child {
+  padding-top: 1em;
+}
