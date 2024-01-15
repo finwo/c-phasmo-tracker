@@ -1,0 +1,74 @@
+<ons-page data-title="Command">
+
+  <ons-toolbar>
+    <div class="left" id="cmdBackWrapper">
+      <template x-if="cmd.isNew">
+        <ons-back-button>Cancel</ons-back-button>
+      </template>
+      <template x-if="!cmd.isNew">
+        <ons-back-button></ons-back-button>
+      </template>
+    </div>
+    <div class="center">Command</div>
+    <div class="right">
+      <ons-button onclick="saveCmd" modifier="quiet" class="button-margin"><ons-icon icon="ion-ios-save" style="font-size:1.6em;"></ons-icon></ons-button>
+    </div>
+  </ons-toolbar>
+
+  <ons-list>
+
+    <ons-list-item class="input-items">
+      <div class="left">
+        <span class="list-item__icon">!</span>
+      </div>
+      <label class="center">
+        <ons-input id="cmdTerm" float maxlength="20" placeholder="command (ex. 'so')"></ons-input>
+      </label>
+    </ons-list-item>
+
+    <ons-list-item class="input-items">
+      <div class="left">
+        <ons-icon icon="ion-ios-send" class="list-item__icon"></ons-icon>
+      </div>
+      <label class="center">
+        <ons-input id="cmd" float maxlength="20" placeholder="Message"></ons-input>
+      </label>
+    </ons-list-item>
+
+    <!-- <ons-list-header>Users</ons-list-header> -->
+    <!-- <ons-list-item class="input-items"> -->
+    <!--     <div class="left"> -->
+    <!--       <ons-icon icon="md-face" class="list-item__icon"></ons-icon> -->
+    <!--     </div> -->
+    <!--     <label class="center"> -->
+    <!--     <ons-input id="asUsername" float maxlength="20" placeholder="Name"></ons-input> -->
+    <!--   </label> -->
+    <!-- </ons-list-item> -->
+
+    <!-- <template x-for="(value, index) in asData.usernames"> -->
+    <!--   <ons-list-item> -->
+    <!--     <span x-text="index"></span>: <span x-text="value"></span> -->
+    <!--   </ons-list-item> -->
+    <!-- </template> -->
+
+  </ons-list>
+
+  <center style="margin-top:1em;">
+    Visit <a href="#!" onclick="fn.pushPage({id:'help/command-syntax.html',title:'Command syntax'}); return false;">the command syntax page</a> to learn how to write dynamic messages
+  </center>
+
+  <script>
+    // ons.getScriptPage().onInit = function() {
+    //   // TODO: load from settings
+    //   const elUsername = document.querySelector('#asUsername input');
+
+    //   // Adding upon hitting enter
+    //   elUsername.addEventListener('keyup', ev => {
+    //     if (ev.key.toLowerCase() != 'enter') return;
+    //     asData.usernames.push(elUsername.value);
+    //     elUsername.value = '';
+    //   });
+    // };
+  </script>
+
+</ons-page>

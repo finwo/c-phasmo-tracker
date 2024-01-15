@@ -51,9 +51,6 @@ ons-switch,
 .toolbar .back-button__label {
   line-height: calc(var(--toolbar-height) * 1.2);
 }
-.toolbar__right ons-button.button--quiet {
-  color: inherit;
-}
 
 .list-item__center ons-input {
   width: 100%;

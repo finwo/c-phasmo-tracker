@@ -16,6 +16,9 @@ window.Alpine = Alpine;
 import tmpl_app from "./app.html";
 appendHTML(document.body, tmpl_app);
 
+import tmpl_help_command_syntax from "./page/help/command-syntax.html";
+appendTemplate(document.body, tmpl_help_command_syntax, "help/command-syntax.html");
+
 import tmpl_settings from "./page/settings.html";
 appendTemplate(document.body, tmpl_settings, "settings.html");
 
@@ -24,6 +27,9 @@ appendTemplate(document.body, tmpl_settings_auto_shoutout, "settings/auto-shouto
 
 import tmpl_settings_commands from "./page/settings/commands.html";
 appendTemplate(document.body, tmpl_settings_commands, "settings/commands.html");
+
+import tmpl_settings_command from "./page/settings/command.html";
+appendTemplate(document.body, tmpl_settings_command, "settings/command.html");
 
 import tmpl_settings_overlay_chat from "./page/settings/overlay-chat.html";
 appendTemplate(document.body, tmpl_settings_overlay_chat, "settings/overlay-chat.html");

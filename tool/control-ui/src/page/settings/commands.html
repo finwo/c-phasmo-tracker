@@ -24,9 +24,19 @@
         Add command
       </div>
       <div class="right">
-        <ons-button modifier="quiet" class="button-margin"><ons-icon icon="ion-ios-add" style="font-size:1.6em;"></ons-icon></ons-button>
+        <ons-button onclick="fn.setCmd(true); fn.pushPage({id: 'settings/command.html', title: 'Command'});" modifier="quiet" class="button-margin"><ons-icon icon="ion-ios-add" style="font-size:1.6em;"></ons-icon></ons-button>
       </div>
     </ons-list-item>
+
+    <template x-for="c in cmds._">
+      <ons-list-item>
+        !<span x-text="c.term"></span>
+      </ons-list-item>
+    </template>
+
+
+
+
     <!-- <ons-list-header>Users</ons-list-header> -->
     <!-- <ons-list-item class="input-items"> -->
     <!--     <div class="left"> -->
@@ -46,14 +56,28 @@
   </ons-list>
 
   <script>
-    // // TODO: load/update from settings
-    // let asData = Alpine.reactive({
-    //   usernames : ['finwo_'],
-    // });
+    window.cmd = Alpine.reactive({
+      isNew   : false,
+      term    : '',
+      message : '',
+    });
 
-    // document.addEventListener('alpine:init', () => {
-    //   Alpine.data('asData', () => asData);
-    // });
+    window.cmds = Alpine.reactive({_:[]});
+
+    window.fn.setCmd = function(meta) {
+      if ('boolean' === typeof meta) {
+        cmd.isNew   = meta;
+        cmd.term    = '';
+        cmd.message = '';
+      } else if (meta && ('object' === typeof meta)) {
+        window.fn.setCmd(false);
+        Object.assign(cmd, meta);
+      }
+    }
+
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('cmd', () => asData);
+    });
 
     // ons.getScriptPage().onInit = function() {
     //   // TODO: load from settings
