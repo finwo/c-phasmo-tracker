@@ -1,0 +1,71 @@
+<ons-page data-title="Commands">
+
+  <ons-toolbar>
+    <div class="left">
+      <ons-back-button></ons-back-button>
+    </div>
+    <div class="center">Commands</div>
+  </ons-toolbar>
+
+  <ons-list>
+    <ons-list-item>
+      <label class="center" for="cmdEnabled">
+        Enabled
+      </label>
+      <div class="right">
+        <ons-switch id="model-switch" input-id="cmdEnabled" checked="true"></ons-switch>
+      </div>
+    </ons-list-item>
+
+    <ons-list-header>&nbsp;</ons-list-header>
+
+    <ons-list-item>
+      <div class="center">
+        Add command
+      </div>
+      <div class="right">
+        <ons-button modifier="quiet" class="button-margin"><ons-icon icon="ion-ios-add" style="font-size:1.6em;"></ons-icon></ons-button>
+      </div>
+    </ons-list-item>
+    <!-- <ons-list-header>Users</ons-list-header> -->
+    <!-- <ons-list-item class="input-items"> -->
+    <!--     <div class="left"> -->
+    <!--       <ons-icon icon="md-face" class="list-item__icon"></ons-icon> -->
+    <!--     </div> -->
+    <!--     <label class="center"> -->
+    <!--     <ons-input id="asUsername" float maxlength="20" placeholder="Name"></ons-input> -->
+    <!--   </label> -->
+    <!-- </ons-list-item> -->
+
+    <!-- <template x-for="(value, index) in asData.usernames"> -->
+    <!--   <ons-list-item> -->
+    <!--     <span x-text="index"></span>: <span x-text="value"></span> -->
+    <!--   </ons-list-item> -->
+    <!-- </template> -->
+
+  </ons-list>
+
+  <script>
+    // // TODO: load/update from settings
+    // let asData = Alpine.reactive({
+    //   usernames : ['finwo_'],
+    // });
+
+    // document.addEventListener('alpine:init', () => {
+    //   Alpine.data('asData', () => asData);
+    // });
+
+    // ons.getScriptPage().onInit = function() {
+    //   // TODO: load from settings
+    //   const elUsername = document.querySelector('#asUsername input');
+
+    //   // Adding upon hitting enter
+    //   elUsername.addEventListener('keyup', ev => {
+    //     if (ev.key.toLowerCase() != 'enter') return;
+    //     asData.usernames.push(elUsername.value);
+    //     elUsername.value = '';
+    //   });
+    // };
+  </script>
+
+</ons-page>

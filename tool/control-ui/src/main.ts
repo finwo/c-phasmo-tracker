@@ -6,6 +6,8 @@ import ons from 'onsenui/js/onsenui.js';
 import { Client as TwitchClient } from 'tmi.js';
 import { appendHTML, appendTemplate } from './lib/ui.ts';
 
+import './lib/commands.ts';
+
 // Make things global
 window.ons     = ons;
 window.Alpine = Alpine;
@@ -14,17 +16,14 @@ window.Alpine = Alpine;
 import tmpl_app from "./app.html";
 appendHTML(document.body, tmpl_app);
 
-import tmpl_tabbar from  "./component/tabbar.html";
-appendTemplate(document.body, tmpl_tabbar, "tabbar.html");
-
-import tmpl_home from  "./page/home.html";
-appendTemplate(document.body, tmpl_home, "home.html");
-
 import tmpl_settings from "./page/settings.html";
 appendTemplate(document.body, tmpl_settings, "settings.html");
 
 import tmpl_settings_auto_shoutout from "./page/settings/auto-shoutout.html";
 appendTemplate(document.body, tmpl_settings_auto_shoutout, "settings/auto-shoutout.html");
+
+import tmpl_settings_commands from "./page/settings/commands.html";
+appendTemplate(document.body, tmpl_settings_commands, "settings/commands.html");
 
 import tmpl_settings_overlay_chat from "./page/settings/overlay-chat.html";
 appendTemplate(document.body, tmpl_settings_overlay_chat, "settings/overlay-chat.html");

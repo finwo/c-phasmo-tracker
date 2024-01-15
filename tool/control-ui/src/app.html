@@ -1,14 +1,27 @@
 <ons-navigator id="appNavigator" swipeable swipe-target-width="80px">
   <ons-page>
-    <ons-splitter id="appSplitter">
-      <ons-splitter-side id="sidemenu" page="sidemenu.html" swipeable side="right" collapse="" width="260px"></ons-splitter-side>
-      <ons-splitter-content page="tabbar.html"></ons-splitter-content>
-    </ons-splitter>
+
+    <ons-toolbar>
+      <div class="center">Home</div>
+      <div class="right">
+        <ons-button onclick="fn.pushPage({id: 'settings.html', title: 'Settings'})" modifier="quiet" class="button-margin"><ons-icon icon="ion-ios-settings" style="font-size:1.6em;"></ons-icon></ons-button>
+      </div>
+    </ons-toolbar>
+
+    <ons-card onclick="fn.pushPage({id: 'settings/overlay-chat.html', title: 'Chat settings'})">
+      <div class="title">Chat settings</div>
+      <div class="content">Open up settings for the chat overlay</div>
+    </ons-card>
+
+    <ons-card onclick="fn.pushPage({'id': 'settings/commands.html', 'title': 'Commands'})">
+      <div class="title">Commands</div>
+      <div class="content">Control which commands are enabled</div>
+    </ons-card>
+
+    <ons-card onclick="fn.pushPage({'id': 'settings/auto-shoutout.html', 'title': 'Auto shoutout'})">
+      <div class="title">Auto shoutout settings</div>
+      <div class="content">Open up settings for the auto-shoutout feature</div>
+    </ons-card>
+
   </ons-page>
 </ons-navigator>
-
-<style>
-  ons-splitter-side[animation=overlay] {
-    border-left: 1px solid #bbb;
-  }
-</style>
