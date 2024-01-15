@@ -33,29 +33,31 @@ async function renderString(template: string, data: any = {}): string {
 
   // Replace with argument data
   const squished = flatten(data);
-  let   replaced = false;
-  for(let replaced = true ; replaced ;) {
-    replaced = false;
-    for(const key of Object.keys(squished)) {
-      let tmp = output.replaceAll('{{' + key + '}}', squished[key]);
-      if (tmp !== output) {
-        output   = tmp;
-        replaced = true;
-      }
-    }
+  for(const key of Object.keys(squished)) {
+    output = output.replaceAll(`{{${key}}}`, squished[key]);
   }
 
-  // Handle eval command
-  while(matches = output.match(/\{\{eval (.+?)\}\}/)) {
-    const fn = new Function('return ' + matches[1]);
-    output = output.replace(matches[0], fn());
-  }
+  // Handle randInt command
+  output = output.replace(/\{\{randInt (\d+)( \d+)?\}\}/g, (_, l, h) => {
+    if ('undefined' === typeof h) { h = l; l = 0; };
+    const minInt = Math.min(parseInt(l), parseInt(h));
+    const maxInt = Math.max(parseInt(l), parseInt(h)) + 1;
+    const diff   = maxInt - minInt;
+    return minInt + Math.floor(Math.random() * diff);
+  });
 
+  // // Handle eval command
+  // while(matches = output.match(/\{\{eval (.+?)\}\}/)) {
+  //   const fn = new Function('return ' + matches[1]);
+  //   output = output.replace(matches[0], fn());
+  // }
 
   // Handle urlfetch command
   while(matches = output.match(/\{\{urlfetch (.+?)\}\}/)) {
     const result = await fetch(matches[1]);
-    output = output.replace(matches[0], await result.text());
+    output = output.substring(0, matches.index) +
+             (await result.text()) +
+             output.substring(matches.index + matches[0].length);
   }
 
   return output;
