@@ -6,7 +6,7 @@ import ons from 'onsenui/js/onsenui.js';
 import { Client as TwitchClient } from 'tmi.js';
 import { appendHTML, appendTemplate } from './lib/ui.ts';
 
-import './lib/commands.ts';
+import { ingestCommands } from './lib/commands.ts';
 
 // Make things global
 window.ons     = ons;
@@ -69,6 +69,18 @@ window.appSettings = new Proxy({}, {
   },
 });
 
+// Setup a bounded config entry for commands
+window.cmds = Alpine.reactive({l:false,_:[]});
+(async () => {
+  window.cmds._ = await window.appSettings.commands || [];
+  cmds.l        = true;
+})();
+Alpine.effect(() => {
+  if (!cmds.l) return;
+  window.appSettings.commands = window.cmds._;
+});
+
+
 async function initTwitchClient() {
   if (window.twitchClient) {
     window.twitchClient.disconnect();
@@ -87,6 +99,8 @@ async function initTwitchClient() {
   });
 
   twitchClient.on('message', (channel, tags, message, self) => {
+    ingestCommands({ channel, tags, message, self });
+
     if (self) return;
     fetch("/topic/chat", {
       method: 'POST',

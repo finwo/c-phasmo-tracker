@@ -63,6 +63,25 @@ async function renderString(template: string, data: any = {}): string {
   return output;
 }
 
+async function ingestCommands({ channel, tags, message, self }) {
+  if (message.substring(0,1) !== '!') return;
+
+  // Initial split & check
+  if (!window.cmds.l) return;
+  const argv = { ...message.substring(1).split(' ') };
+  const found = window.cmds._.find(c => c.term === argv[0]);
+  if (!found) return;
+
+  // Build the rest of argv
+  Object.assign(argv, {
+    '@'      : Object.values(argv).slice(1),
+    'channel': channel.substring(1),
+  }, tags);
+
+  twitchClient.say(channel, await renderString(found.message, argv));
+}
+
 export {
   renderString,
+  ingestCommands,
 };

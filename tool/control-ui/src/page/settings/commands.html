@@ -46,17 +46,6 @@
       message : '',
     });
 
-    // Setup a bounded config entry
-    window.cmds = Alpine.reactive({l:false,_:[]});
-    (async () => {
-      window.cmds._ = await window.appSettings.commands || [];
-      cmds.l        = true;
-    })();
-    Alpine.effect(() => {
-      if (!cmds.l) return;
-      window.appSettings.commands = window.cmds._;
-    });
-
     window.fn.setCmd = function(meta) {
       if ('boolean' === typeof meta) {
         cmd.isNew   = meta;
