@@ -60,5 +60,5 @@ ons-page .page__content > p {
   padding: 0 1em;
 }
 ons-page .page__content > :first-child {
-  padding-top: 1em;
+  margin-top: 1em;
 }
