@@ -120,7 +120,8 @@ async function initTwitchClient() {
   twitchClient.on('message', (channel, tags, message, self) => {
     ingestCommands({ channel, tags, message, self });
 
-    if (self) return;
+    // if (self) return;
+
     fetch("/topic/chat", {
       method: 'POST',
       headers: {
