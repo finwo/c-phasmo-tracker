@@ -33,13 +33,13 @@ img.emote {
 span.title {
   text-shadow: 0 0 0 #FFF;
 }
-/* .notyf__message {
-  vertical-align: middle !important;
-} */
 .notyf__ripple {
   height: 200%;
   width: 400%;
   right: -100%;
+}
+.notyf__toast {
+  box-shadow: 0 3px 7px #0008;
 }
 `;
 document.head.appendChild(styleEl);
@@ -52,7 +52,7 @@ const notyf = new Notyf({
   types       : [
     {
       type       : 'message',
-      background : '#000B',
+      background : '#555B',
     },
   ],
 });
