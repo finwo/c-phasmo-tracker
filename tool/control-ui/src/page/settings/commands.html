@@ -30,7 +30,7 @@
 
     <template x-for="c in cmds._">
       <ons-list-item @click="fn.setCmd(c); fn.pushPage({id: 'settings/command.html', title: 'Command'});">
-        <div class="center">!<span x-text="c.term"></span></div>
+        <div class="center">!<span x-text="c.term + (((c.arguments ?? -1) >= 0) ? (' (' + c.arguments + ')') : '')"></span></div>
         <div class="right">
           <ons-button @click.stop="fn.delCmd(c);" modifier="quiet"><ons-icon icon="ion-ios-trash" style="font-size:1.6em;"></ons-icon></ons-button>
         </div>
