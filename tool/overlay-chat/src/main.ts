@@ -52,7 +52,7 @@ const notyf = new Notyf({
   types       : [
     {
       type       : 'message',
-      background : '#0008',
+      background : '#000B',
     },
   ],
 });
