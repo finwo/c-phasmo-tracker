@@ -105,6 +105,17 @@ $(headertools): tool/bin2c/bin2c $(htmltools)
 $(BIN): $(OBJ)
 	$(CPP) $(OBJ) $(CPPFLAGS) $(LDFLAGS) -s -o $@
 
+.PHONY: watch
+watch:
+	npx concurrently \
+		"cd tool/control-ui             ; npm install" \
+		"cd tool/overlay-chat           ; npm install" \
+		"cd tool/overlay-phasmo-tracker ; npm install"
+	npx concurrently \
+		"cd tool/control-ui             ; npm run watch" \
+		"cd tool/overlay-chat           ; npm run watch" \
+		"cd tool/overlay-phasmo-tracker ; npm run watch"
+
 .PHONY: clean
 clean:
 	rm -rf $(BIN)
