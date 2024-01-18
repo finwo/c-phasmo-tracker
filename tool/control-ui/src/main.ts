@@ -76,7 +76,15 @@ window.appSettings = new Proxy({}, {
 // Setup a bounded config entry for commands
 window.cmds = Alpine.reactive({l:false,_:[]});
 (async () => {
-  window.cmds._ = await window.appSettings.commands || [];
+  window.cmds._ = (await window.appSettings.commands || [])
+    .sort((a,b) => {
+      if (a.term > b.term) return  1;
+      if (a.term < b.term) return -1;
+      if ((a.arguments ?? -1) > (b.arguments ?? -1)) return  1;
+      if ((a.arguments ?? -1) < (b.arguments ?? -1)) return -1;
+      return 0;
+    })
+    ;
   window.cmds.l = true;
 
   // Ensure all commands have an ID
