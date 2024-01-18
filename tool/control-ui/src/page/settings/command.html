@@ -22,12 +22,7 @@
         <span class="list-item__icon">!</span>
       </div>
       <label class="center">
-        <template x-if="cmd.isNew">
-          <ons-input id="cmdTerm" float :value="cmd.term" maxlength="20" title="The command itself" placeholder="command (ex. 'so')"></ons-input>
-        </template>
-        <template x-if="!cmd.isNew">
-          <ons-input id="cmdTerm" float :value="cmd.term" maxlength="20" title="The command itself" placeholder="command (ex. 'so')" disabled></ons-input>
-        </template>
+        <ons-input id="cmdTerm" float :value="cmd.term" maxlength="20" title="The command itself" placeholder="command (ex. 'so')"></ons-input>
       </label>
     </ons-list-item>
 
@@ -70,6 +65,7 @@
       if (oldCmd) {
         oldCmd.arguments = cmd.arguments;
         oldCmd.message   = cmd.message;
+        oldCmd.term      = cmd.term;
       } else {
         cmds._ = [
           ...cmds._,
