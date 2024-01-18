@@ -23,20 +23,29 @@
       </div>
       <label class="center">
         <template x-if="cmd.isNew">
-          <ons-input id="cmdTerm" float :value="cmd.term" maxlength="20" placeholder="command (ex. 'so')"></ons-input>
+          <ons-input id="cmdTerm" float :value="cmd.term" maxlength="20" title="The command itself" placeholder="command (ex. 'so')"></ons-input>
         </template>
         <template x-if="!cmd.isNew">
-          <ons-input id="cmdTerm" float :value="cmd.term" maxlength="20" placeholder="command (ex. 'so')" disabled></ons-input>
+          <ons-input id="cmdTerm" float :value="cmd.term" maxlength="20" title="The command itself" placeholder="command (ex. 'so')" disabled></ons-input>
         </template>
       </label>
     </ons-list-item>
 
     <ons-list-item class="input-items">
       <div class="left">
-        <ons-icon icon="ion-ios-send" class="list-item__icon"></ons-icon>
+        <i data-lucide="hash"></i>
       </div>
       <label class="center">
-        <ons-input id="cmdMessage" float :value="cmd.message" maxlength="200" placeholder="Message"></ons-input>
+        <ons-input id="cmdArguments" float type="number" :value="cmd.arguments" min="-1" max="9" title="Number of arguments (-1 = don't care)" placeholder="Arguments"></ons-input>
+      </label>
+    </ons-list-item>
+
+    <ons-list-item class="input-items">
+      <div class="left">
+        <i data-lucide="send"></i>
+      </div>
+      <label class="center">
+        <ons-input id="cmdMessage" float :value="cmd.message" maxlength="200" title="The message the bot should answer (no / commands supported)" placeholder="Message"></ons-input>
       </label>
     </ons-list-item>
 
@@ -49,20 +58,26 @@
   <script>
 
     function saveCmd() {
-      const elTerm    = document.querySelector('#cmdTerm    input');
-      const elMessage = document.querySelector('#cmdMessage input');
-      cmd.term    = elTerm.value;
-      cmd.message = elMessage.value;
+      const elTerm      = document.querySelector('#cmdTerm      input');
+      const elArguments = document.querySelector('#cmdArguments input');
+      const elMessage   = document.querySelector('#cmdMessage   input');
 
-      const oldCmd = cmds._.find(c => c.term == cmd.term);
+      cmd.term      = elTerm.value;
+      cmd.arguments = Math.max(-1, Math.min(parseInt(elArguments.value), 9));
+      cmd.message   = elMessage.value;
+
+      const oldCmd = cmds._.find(c => c._id == cmd._id);
       if (oldCmd) {
-        oldCmd.message = cmd.message;
+        oldCmd.arguments = cmd.arguments;
+        oldCmd.message   = cmd.message;
       } else {
         cmds._ = [
           ...cmds._,
           {
-            term   : cmd.term,
-            message: cmd.message,
+            _id       : cmd._id,
+            term      : cmd.term,
+            arguments : cmd.arguments,
+            message   : cmd.message,
           },
         ];
       }
@@ -70,6 +85,7 @@
       const elButton = document.querySelector('.back-button');
       elButton.click();
     }
+
   </script>
 
 </ons-page>

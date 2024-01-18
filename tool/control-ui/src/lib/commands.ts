@@ -68,13 +68,19 @@ async function ingestCommands({ channel, tags, message, self }) {
 
   // Initial split & check
   if (!window.cmds.l) return;
-  const argv = { ...message.substring(1).split(' ') };
-  const found = window.cmds._.find(c => c.term === argv[0]);
+  const splitted = message.substring(1).split(' ');
+  const argc  = splitted.length - 1;
+  const argv  = { ...splitted };
+  const found = window.cmds._
+    .filter(c => c.term === argv[0])
+    .sort((a,b) => ((b.arguments ?? -1) - (a.arguments ?? -1)))
+    .find(c => (((c.arguments ?? -1) === argc) || ((c.arguments ?? -1) === -1)))
+    ;
   if (!found) return;
 
   // Build the rest of argv
   Object.assign(argv, {
-    '@'      : Object.values(argv).slice(1),
+    '@'      : splitted.slice(1),
     'channel': channel.substring(1),
   }, tags);
 

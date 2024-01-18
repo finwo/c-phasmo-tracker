@@ -1,7 +1,10 @@
 import 'onsenui/css/onsenui.css';
 import 'onsenui/css/onsen-css-components.css';
+import { createIcons, icons } from 'lucide';
+
 import Alpine from 'alpinejs';
 import ons from 'onsenui/js/onsenui.js';
+import { v4 as uuidv4 } from 'uuid';
 
 import { Client as TwitchClient } from 'tmi.js';
 import { appendHTML, appendTemplate } from './lib/ui.ts';
@@ -9,8 +12,9 @@ import { appendHTML, appendTemplate } from './lib/ui.ts';
 import { ingestCommands } from './lib/commands.ts';
 
 // Make things global
-window.ons     = ons;
+window.ons    = ons;
 window.Alpine = Alpine;
+window.uuidv4 = uuidv4;
 
 // Load the main template
 import tmpl_app from "./app.html";
@@ -73,7 +77,14 @@ window.appSettings = new Proxy({}, {
 window.cmds = Alpine.reactive({l:false,_:[]});
 (async () => {
   window.cmds._ = await window.appSettings.commands || [];
-  cmds.l        = true;
+  window.cmds.l = true;
+
+  // Ensure all commands have an ID
+  setImmediate(() => {
+    for(const c of window.cmds._) {
+      if (!c._id) c._id = uuidv4();
+    }
+  });
 })();
 Alpine.effect(() => {
   if (!cmds.l) return;
@@ -117,6 +128,10 @@ async function initTwitchClient() {
 
   twitchClient.connect();
 }
+
+document.addEventListener('init', () => {
+  createIcons({ icons });
+});
 
 // Kickstart active things
 window.twitchClient = null;

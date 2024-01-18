@@ -41,16 +41,19 @@
 
   <script>
     window.cmd = Alpine.reactive({
-      isNew   : false,
-      term    : '',
-      message : '',
+      isNew     : false,
+      term      : '',
+      arguments : -1,
+      message   : '',
     });
 
     window.fn.setCmd = function(meta) {
       if ('boolean' === typeof meta) {
-        cmd.isNew   = meta;
-        cmd.term    = '';
-        cmd.message = '';
+        cmd._id       = uuidv4();
+        cmd.isNew     = meta;
+        cmd.term      = '';
+        cmd.arguments = -1;
+        cmd.message   = '';
       } else if (meta && ('object' === typeof meta)) {
         window.fn.setCmd(false);
         Object.assign(cmd, meta);
@@ -58,7 +61,7 @@
     };
 
     window.fn.delCmd = function(c) {
-      window.cmds._ = window.cmds._.filter(org => c.term !== org.term);
+      window.cmds._ = window.cmds._.filter(org => c._id !== org._id);
     };
 
     document.addEventListener('alpine:init', () => {
