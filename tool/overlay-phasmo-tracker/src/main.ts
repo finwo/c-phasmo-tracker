@@ -23,7 +23,7 @@ client.addListener(async ({self, channel, tags, message}) => {
   // Call it, it can decide perms for itself
   commands[argv[0]](...(argv.slice(1)));
 
-  // console.log(JSON.stringify({channel,tags,message},null,2));
+  console.log(JSON.stringify({self,channel,tags,message},null,2));
 
   // // Check if the chatter has the right permissions
   // const hasPerms = (('#'+tags.username) == channel) || tags.mod;
