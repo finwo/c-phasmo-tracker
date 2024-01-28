@@ -67,7 +67,12 @@ window.appSettings = new Proxy({}, {
     _setSettings(allSettings);
 
     // Re-initialize twitch client
-    if (['username', 'channel', 'oauthToken'].includes(prop)) {
+    if (
+      ['username', 'channel', 'oauthToken'].includes(prop) &&
+      (await appSettings.username) &&
+      (await appSettings.channel) &&
+      (await appSettings.oauthToken)
+    ) {
       initTwitchClient();
     }
   },
@@ -99,10 +104,15 @@ Alpine.effect(() => {
   window.appSettings.commands = window.cmds._;
 });
 
-
 async function initTwitchClient() {
   if (window.twitchClient) {
     window.twitchClient.disconnect();
+    window.twitchClient = null;
+  }
+
+  if (!(await appSettings.oauthToken)) {
+    ons.notification.alert("Please connect an account on the settings page.");
+    return;
   }
 
   window.twitchClient = new TwitchClient({
