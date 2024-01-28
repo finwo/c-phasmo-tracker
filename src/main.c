@@ -15,6 +15,7 @@
 #include "finwo/fnet.h"
 #include "finwo/http-parser.h"
 #include "finwo/http-server.h"
+#include "finwo/opener.h"
 #include "kgabis/parson.h"
 #include "tinycthread/tinycthread.h"
 #include "webview/webview.h"
@@ -65,6 +66,29 @@ char * get_html(const char *name) {
   return "";
 }
 
+void bound_open(const char *seq, const char *req, void *arg) {
+  context_t *context = arg;
+
+  JSON_Value *req_parsed = json_parse_string(req);
+  if (json_value_get_type(req_parsed) != JSONArray) {
+    webview_return(context->w, seq, 1, "new Error('Call error')");
+    json_value_free(req_parsed);
+    return;
+  }
+
+  JSON_Value *req_i0 = json_array_get_value(json_array(req_parsed), 0);
+  if (json_value_get_type(req_i0) != JSONString) {
+    json_value_free(req_parsed);
+    webview_return(context->w, seq, 1, "new Error('Passed url must be a string')");
+    return;
+  }
+
+  opener(json_value_get_string(req_i0));
+
+  json_value_free(req_parsed);
+  webview_return(context->w, seq, 0, "null");
+}
+
 void bound_getSettings(const char *seq, const char *req, void *arg) {
   context_t *context = arg;
   struct buf *settings_contents = file_get_contents(context->settings_file);
@@ -91,6 +115,7 @@ void bound_setSettings(const char *seq, const char *req, void *arg) {
   }
 
   json_serialize_to_file_pretty(req_i0, context->settings_file);
+  json_value_free(req_parsed);
   webview_return(context->w, seq, 0, "null");
 }
 
@@ -323,7 +348,7 @@ int thread_window(void *arg) {
   webview_eval(w, "document.location.href = 'http://localhost:38475/control-ui';");
   webview_bind(w, "_getSettings", bound_getSettings, arg);
   webview_bind(w, "_setSettings", bound_setSettings, arg);
-  /* webview_set_html(w, get_html("control-ui")); */
+  webview_bind(w, "_open"       , bound_open       , arg);
   webview_run(w);
   webview_destroy(w);
 

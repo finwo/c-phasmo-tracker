@@ -56,31 +56,47 @@ window.fn.pushPage = function (page, anim) {
   }
 };
 
-window.appSettings = new Proxy({}, {
-  async get(target, prop, receiver) {
-    const allSettings = await _getSettings();
-    return (allSettings||{})[prop] || '';
-  },
-  async set(obj, prop, value) {
-    const allSettings = await _getSettings();
-    allSettings[prop] = value;
-    _setSettings(allSettings);
+window.appSettings = Alpine.reactive({});
+(async () => {
+  const fetched = await _getSettings();
+  for(const k of Object.keys(fetched)) {
+    appSettings[k] = fetched[k];
+  }
+  let _appSettings = JSON.stringify(appSettings);
+  Alpine.effect(async () => {
+    const currentSettings = JSON.stringify(appSettings);
+    if (currentSettings === _appSettings) return;
+    _appSettings = currentSettings;
+    await _setSettings(JSON.parse(currentSettings));
+  });
+})();
 
-    // Re-initialize twitch client
-    if (
-      ['username', 'channel', 'oauthToken'].includes(prop) &&
-      (await appSettings.username) &&
-      (await appSettings.channel) &&
-      (await appSettings.oauthToken)
-    ) {
-      initTwitchClient();
-    }
-  },
-});
+// window.appSettings = new Proxy({}, {
+//   async get(target, prop, receiver) {
+//     const allSettings = await _getSettings();
+//     return (allSettings||{})[prop] || '';
+//   },
+//   async set(obj, prop, value) {
+//     obj[prop
+//     const allSettings = await _getSettings();
+//     allSettings[prop] = value;
+//     _setSettings(allSettings);
+
+//     // Re-initialize twitch client
+//     if (
+//       ['username', 'channel', 'oauthToken'].includes(prop) &&
+//       (await appSettings.username) &&
+//       (await appSettings.channel) &&
+//       (await appSettings.oauthToken)
+//     ) {
+//       initTwitchClient();
+//     }
+//   },
+// });
 
 // Setup a bounded config entry for commands
 window.cmds = Alpine.reactive({l:false,_:[]});
-(async () => {
+setTimeout(async () => {
   window.cmds._ = (await window.appSettings.commands || [])
     .sort((a,b) => {
       if (a.term > b.term) return  1;
@@ -98,7 +114,7 @@ window.cmds = Alpine.reactive({l:false,_:[]});
       if (!c._id) c._id = uuidv4();
     }
   });
-})();
+}, 500);
 Alpine.effect(() => {
   if (!cmds.l) return;
   window.appSettings.commands = window.cmds._;
@@ -110,7 +126,7 @@ async function initTwitchClient() {
     window.twitchClient = null;
   }
 
-  if (!(await appSettings.oauthToken)) {
+  if (!appSettings.oauthToken) {
     ons.notification.alert("Please connect an account on the settings page.");
     return;
   }
@@ -121,10 +137,10 @@ async function initTwitchClient() {
       reconnect : true,
     },
     identity: {
-      username: (await appSettings.username) || (await appSettings.channel),
-      password: await appSettings.oauthToken,
+      username: appSettings.username || appSettings.channel,
+      password: appSettings.oauthToken,
     },
-    channels: [(await appSettings.channel) || (await appSettings.username)],
+    channels: [(appSettings.channel || appSettings.username)],
   });
 
   twitchClient.on('message', (channel, tags, message, self) => {
@@ -153,5 +169,5 @@ document.addEventListener('init', () => {
 
 // Kickstart active things
 window.twitchClient = null;
-initTwitchClient();
+setTimeout(initTwitchClient, 1000);
 Alpine.start();
