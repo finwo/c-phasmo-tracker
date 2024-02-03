@@ -247,21 +247,23 @@ void route_get_topic(struct http_server_reqdata *reqdata, const char *topic) {
   listeners       = listener;
 }
 
-// Generic POST topic route
-void route_post_topic(struct http_server_reqdata *reqdata, const char *topic) {
-  struct fnet_t              *conn          = reqdata->connection;
-  struct http_parser_message *request       = reqdata->reqres->request;
-  struct http_parser_message *response      = reqdata->reqres->response;
+void jerry_post(const char *topic, struct buf *data) {
   struct llistener           *listener      = listeners;
   struct llistener           *listener_prev = NULL;
 
-  // Ensure there's a newline
-  buf_append(request->body, "\n", 1);
+  // Get a copy of data with trailing newline
+  struct buf *dat = calloc(1, sizeof(struct buf));
+  dat->cap  = data->cap + 1;
+  dat->len  = data->len;
+  dat->data = malloc(dat->cap);
+  memcpy(dat->data, data->data, data->len);
+  buf_append(dat, "\n", 1);
 
   // Pre-build chunk
-  int chunksize = request->body->len + 64;
+  // Not really +64, that just allows for some breathing room
+  int chunksize = dat->len + 64;
   char *chunk = calloc(1, chunksize);
-  chunksize = snprintf(chunk, chunksize, "%lx\r\n%s\r\n", request->body->len, request->body->data);
+  chunksize = snprintf(chunk, chunksize, "%lx\r\n%s\r\n", dat->len, dat->data);
 
   // Output to all listeners on the topic
   while(listener) {
@@ -298,6 +300,16 @@ void route_post_topic(struct http_server_reqdata *reqdata, const char *topic) {
 
   // And we're done with this memory
   free(chunk);
+
+}
+
+// Generic POST topic route
+void route_post_topic(struct http_server_reqdata *reqdata, const char *topic) {
+  struct fnet_t              *conn          = reqdata->connection;
+  struct http_parser_message *request       = reqdata->reqres->request;
+  struct http_parser_message *response      = reqdata->reqres->response;
+
+  jerry_post(topic, request->body);
 
   // Build response
   const char *origin = http_parser_header_get(request, "Origin");
