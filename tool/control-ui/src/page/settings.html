@@ -46,15 +46,26 @@
     window.fn = window.fn || {};
     window.fn.toggleUser = async () => {
 
+      // Ensure the auth array exists
+      if (!appSettings.auth) appSettings.auth = [];
+
+      // Fetch pre-existing credentials
+      const knownTwitchAuth = appSettings.auth.find(credentials => credentials.platform == 'twitch');
+      const twitchAuth      = knownTwitchAuth || {};
+
       // Disconnect
-      if (appSettings.oauthToken) {
+      if (appSettings.knownTwitchAuth) {
+        appSettings.auth = appSettings.auth.filter(credentials => credentials !== knownTwitchAuth);
         document.getElementById('oauthButton').innerText = 'Connect';
-        await new Promise(d => setTimeout(() => { appSettings.oauthToken = ''; d(); }, 100));
-        await new Promise(d => setTimeout(() => { appSettings.oauthToken = ''; d(); }, 100));
         return;
       }
 
-      _open('https://example.com');
+      // Initialize implicit grant for twitch
+      _open('https://id.twitch.tv/oauth2/authorize?' + qse({
+        client_id    : clientId,
+        redirect_uri : 'http://' + document.location.host + '/oauth2/callback/twitch',
+        response_type: 'token',
+      }));
     };
 
     ons.getScriptPage().onInit = function () {

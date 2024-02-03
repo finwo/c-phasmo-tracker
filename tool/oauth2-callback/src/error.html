@@ -1,0 +1,70 @@
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+      cursor: default;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    main, aside, section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    main {
+      height: 100%;
+    }
+    section {
+      display: block;
+      text-align: center;
+      width: 100%;
+    }
+    section span {
+      font-size: 2rem;
+      font-weight: 500;
+      display: inline-block;
+      border-bottom: 1px solid #EAEAEA;
+      text-align: center;
+      padding: 1.5rem 0;
+    }
+    section p {
+      font-size: 1.2rem;
+      font-weight: 400;
+      display: inline-block;
+      margin: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      section span {
+        border-bottom: none;
+        border-right: 1px solid #EAEAEA;
+        padding: 0 1.5rem;
+      }
+      section br {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section>
+      <span id="title"></span>
+      <br/>
+      <p id="description"></p>
+    </section>
+  </main>
+</body>

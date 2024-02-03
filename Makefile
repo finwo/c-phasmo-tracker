@@ -70,8 +70,9 @@ override CPPFLAGS+=$(CFLAGS)
 
 htmltools:=
 htmltools+=tool/control-ui/dist/index.bundled.html
+htmltools+=tool/oauth2-callback/dist/index.bundled.html
 htmltools+=tool/overlay-chat/dist/index.bundled.html
-htmltools+=tool/overlay-phasmo-tracker/dist/index.bundled.html
+htmltools+=tool/overlay-shoutout/dist/index.bundled.html
 
 headertools=$(htmltools:.html=.h)
 
@@ -108,13 +109,15 @@ $(BIN): $(OBJ)
 .PHONY: watch
 watch:
 	npx concurrently \
-		"cd tool/control-ui             ; npm install" \
-		"cd tool/overlay-chat           ; npm install" \
-		"cd tool/overlay-phasmo-tracker ; npm install"
+		"cd tool/control-ui       ; npm install" \
+		"cd tool/oauth2-callback  ; npm install" \
+		"cd tool/overlay-chat     ; npm install" \
+		"cd tool/overlay-shoutout ; npm install"
 	npx concurrently \
-		"cd tool/control-ui             ; npm run watch" \
-		"cd tool/overlay-chat           ; npm run watch" \
-		"cd tool/overlay-phasmo-tracker ; npm run watch"
+		"cd tool/control-ui       ; npm run watch" \
+		"cd tool/oauth2-callback  ; npm run watch" \
+		"cd tool/overlay-chat     ; npm run watch" \
+		"cd tool/overlay-shoutout ; npm run watch"
 
 .PHONY: clean
 clean:
@@ -122,6 +125,7 @@ clean:
 	rm -rf $(OBJ)
 	rm -rf tool/conrol-ui/dist
 	rm -rf tool/client-jerry/dist
+	rm -rf tool/oauth2-callback/dist
 	rm -rf tool/overlay-chat/dist
-	rm -rf tool/overlay-phasmo-tracker/dist
+	rm -rf tool/overlay-shoutout/dist
 	rm -rf tool/bin2c/bin2c

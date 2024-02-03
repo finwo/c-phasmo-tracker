@@ -10,15 +10,24 @@ import { Client as TwitchClient } from 'tmi.js';
 import { appendHTML, appendTemplate } from './lib/ui.ts';
 
 import { ingestCommands } from './lib/commands.ts';
+import { clientId       } from './static.ts';
+import { qse, qsd       } from '../../common/query-string.ts';
 
 // Make things global
-window.ons    = ons;
-window.Alpine = Alpine;
-window.uuidv4 = uuidv4;
+// TODO: replace html templates by ts so we can import there
+window.ons      = ons;
+window.Alpine   = Alpine;
+window.uuidv4   = uuidv4;
+window.clientId = clientId;
+window.qse      = qse;
+window.qsd      = qsd;
 
 // Load the main template
 import tmpl_app from "./app.html";
 appendHTML(document.body, tmpl_app);
+
+// import tmpl_component_alert from "./component/alert.html";
+// appendTemplate(document.body, tmpl_component_alert, "component/alert.html");
 
 import tmpl_help_command_syntax from "./page/help/command-syntax.html";
 appendTemplate(document.body, tmpl_help_command_syntax, "help/command-syntax.html");

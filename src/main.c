@@ -48,6 +48,11 @@ struct llistener *listeners = NULL;
 #define UNUSED(x) (void)x
 
 char * get_html(const char *name) {
+  if (!strcmp("oauth2-callback", name)) {
+    return
+#include "../tool/oauth2-callback/dist/index.bundled.h"
+      ;
+  }
   if (!strcmp("control-ui", name)) {
     return
 #include "../tool/control-ui/dist/index.bundled.h"
@@ -58,9 +63,9 @@ char * get_html(const char *name) {
 #include "../tool/overlay-chat/dist/index.bundled.h"
       ;
   }
-  if (!strcmp("overlay-phasmo-tracker", name)) {
+  if (!strcmp("overlay-shoutout", name)) {
     return
-#include "../tool/overlay-phasmo-tracker/dist/index.bundled.h"
+#include "../tool/overlay-shoutout/dist/index.bundled.h"
       ;
   }
   return "";
@@ -133,11 +138,28 @@ void route_get_settings(struct http_server_reqdata *reqdata) {
   http_parser_header_set(response, "Access-Control-Allow-Origin" , origin ? origin : "*" );
   response->body = settings_contents;
   http_server_response_send(reqdata, true);
+
 }
 
-/* void route_post_settings(struct http_server_reqdata *reqdata) { */
+void route_post_settings(struct http_server_reqdata *reqdata) {
+  struct http_parser_message *request  = reqdata->reqres->request;
+  struct http_parser_message *response = reqdata->reqres->response;
+  context_t                  *context  = reqdata->udata;
 
-/* } */
+  // TODO: actual sanity checking
+  file_put_contents(context->settings_file, request->body, 1);
+
+  // Build response
+  const char *origin = http_parser_header_get(request, "Origin");
+  response->status = 200;
+  http_parser_header_set(response, "Content-Type"                , "application/json"    );
+  http_parser_header_set(response, "Access-Control-Allow-Origin" , origin ? origin : "*" );
+  response->body       = calloc(1, sizeof(struct buf));
+  response->body->data = strdup("{\"ok\":true}");
+  response->body->len  = strlen(response->body->data);
+  response->body->cap  = response->body->len + 1;
+  http_server_response_send(reqdata, true);
+}
 
 /* void bound_homedir(const char *seq, const char *req, void *arg) { */
 /*   UNUSED(req); */
@@ -179,15 +201,17 @@ void route_get_html(struct http_server_reqdata *reqdata, const char *name) {
   reqdata->reqres->response->body->len  = strlen(reqdata->reqres->response->body->data);
   http_server_response_send(reqdata, true);
 }
-
+void route_get_oauth2_callback_twitch(struct http_server_reqdata *reqdata) {
+  route_get_html(reqdata, "oauth2-callback");
+}
 void route_get_control_ui(struct http_server_reqdata *reqdata) {
   route_get_html(reqdata, "control-ui");
 }
 void route_get_overlay_chat(struct http_server_reqdata *reqdata) {
   route_get_html(reqdata, "overlay-chat");
 }
-void route_get_overlay_phasmo_tracker(struct http_server_reqdata *reqdata) {
-  route_get_html(reqdata, "overlay-phasmo-tracker");
+void route_get_overlay_shoutout(struct http_server_reqdata *reqdata) {
+  route_get_html(reqdata, "overlay-shoutout");
 }
 
 // Generic GET topic route
@@ -320,13 +344,15 @@ int thread_http(void *arg) {
 
   context->http_opts = &opts;
 
-  http_server_route("GET" , "/control-ui"            , route_get_control_ui            );
-  http_server_route("GET" , "/config"                , route_get_settings              );
-  /* http_server_route("POST", "/config"                , route_post_settings             ); */
-  http_server_route("GET" , "/overlay/chat"          , route_get_overlay_chat          );
-  http_server_route("GET" , "/overlay/phasmo-tracker", route_get_overlay_phasmo_tracker);
-  http_server_route("GET" , "/topic/chat"            , route_get_topic_chat            );
-  http_server_route("POST", "/topic/chat"            , route_post_topic_chat           );
+  http_server_route("GET" , "/oauth2/callback/twitch", route_get_oauth2_callback_twitch);
+
+  http_server_route("GET" , "/control-ui"      , route_get_control_ui      );
+  http_server_route("GET" , "/config"          , route_get_settings        );
+  http_server_route("POST", "/config"          , route_post_settings       );
+  http_server_route("GET" , "/overlay/chat"    , route_get_overlay_chat    );
+  http_server_route("GET" , "/overlay/shoutout", route_get_overlay_shoutout);
+  http_server_route("GET" , "/topic/chat"      , route_get_topic_chat      );
+  http_server_route("POST", "/topic/chat"      , route_post_topic_chat     );
   http_server_main(&opts);
   printf("http server has shut down\n");
   fnet_shutdown();
