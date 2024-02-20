@@ -37,14 +37,6 @@ typedef struct {
   webview_t w;
 } context_t;
 
-struct llistener {
-  void *next;
-  char *topic;
-  struct fnet_t *conn;
-};
-
-struct llistener *listeners = NULL;
-
 #define UNUSED(x) (void)x
 
 char * get_html(const char *name) {
@@ -69,6 +61,68 @@ char * get_html(const char *name) {
       ;
   }
   return "";
+}
+
+struct llistener {
+  void *next;
+  char *topic;
+  struct fnet_t *conn;
+};
+struct llistener *listeners = NULL;
+void jerry_post(const char *topic, struct buf *data) {
+  struct llistener           *listener      = listeners;
+  struct llistener           *listener_prev = NULL;
+
+  // Get a copy of data with trailing newline
+  struct buf *dat = calloc(1, sizeof(struct buf));
+  dat->cap  = data->cap + 1;
+  dat->len  = data->len;
+  dat->data = malloc(dat->cap);
+  memcpy(dat->data, data->data, data->len);
+  buf_append(dat, "\n", 1);
+
+  // Pre-build chunk
+  // Not really +64, that just allows for some breathing room
+  int chunksize = dat->len + 64;
+  char *chunk = calloc(1, chunksize);
+  chunksize = snprintf(chunk, chunksize, "%lx\r\n%s\r\n", dat->len, dat->data);
+
+  // Output to all listeners on the topic
+  while(listener) {
+    // Handle closed connections
+    if (listener->conn->status & FNET_STATUS_CLOSED) {
+      if (listener_prev) {
+        listener_prev->next = listener->next;
+        fnet_free(listener->conn);
+        free(listener->topic);
+        free(listener);
+        listener = listener_prev->next;
+        continue;
+      } else {
+        listeners = listener->next;
+        fnet_free(listener->conn);
+        free(listener->topic);
+        free(listener);
+        listener = listeners;
+        continue;
+      }
+    }
+    // Transmit to listener
+    if (!strcmp(listener->topic, topic)) {
+      fnet_write(listener->conn, &(struct buf){
+          .data = chunk,
+          .len  = chunksize,
+          .cap  = chunksize,
+      });
+    }
+    // Continue to next listener
+    listener_prev = listener;
+    listener      = listener->next;
+  }
+
+  // And we're done with this memory
+  free(chunk);
+
 }
 
 void bound_open(const char *seq, const char *req, void *arg) {
@@ -149,6 +203,17 @@ void route_post_settings(struct http_server_reqdata *reqdata) {
   // TODO: actual sanity checking
   file_put_contents(context->settings_file, request->body, 1);
 
+  // Get minified version of that json
+  JSON_Value *parsed = json_parse_string(request->body->data);
+  char *minified = json_serialize_to_string(parsed);
+
+  // Notify anyone listening for config updates
+  jerry_post("config", &(struct buf){
+    .data = minified,
+    .len  = strlen(minified),
+    .cap  = strlen(minified),
+  });
+
   // Build response
   const char *origin = http_parser_header_get(request, "Origin");
   response->status = 200;
@@ -159,6 +224,9 @@ void route_post_settings(struct http_server_reqdata *reqdata) {
   response->body->len  = strlen(response->body->data);
   response->body->cap  = response->body->len + 1;
   http_server_response_send(reqdata, true);
+
+  // Clean up
+  json_free_serialized_string(minified);
 }
 
 /* void bound_homedir(const char *seq, const char *req, void *arg) { */
@@ -215,10 +283,12 @@ void route_get_overlay_shoutout(struct http_server_reqdata *reqdata) {
 }
 
 // Generic GET topic route
-void route_get_topic(struct http_server_reqdata *reqdata, const char *topic) {
+void route_get_topic(struct http_server_reqdata *reqdata) {
   struct fnet_t              *conn     = reqdata->connection;
   struct http_parser_message *request  = reqdata->reqres->request;
   struct http_parser_message *response = reqdata->reqres->response;
+
+  const char *topic = http_parser_meta_get(request, "param:name");
 
   // Build response
   const char *origin = http_parser_header_get(request, "Origin");
@@ -247,67 +317,13 @@ void route_get_topic(struct http_server_reqdata *reqdata, const char *topic) {
   listeners       = listener;
 }
 
-void jerry_post(const char *topic, struct buf *data) {
-  struct llistener           *listener      = listeners;
-  struct llistener           *listener_prev = NULL;
-
-  // Get a copy of data with trailing newline
-  struct buf *dat = calloc(1, sizeof(struct buf));
-  dat->cap  = data->cap + 1;
-  dat->len  = data->len;
-  dat->data = malloc(dat->cap);
-  memcpy(dat->data, data->data, data->len);
-  buf_append(dat, "\n", 1);
-
-  // Pre-build chunk
-  // Not really +64, that just allows for some breathing room
-  int chunksize = dat->len + 64;
-  char *chunk = calloc(1, chunksize);
-  chunksize = snprintf(chunk, chunksize, "%lx\r\n%s\r\n", dat->len, dat->data);
-
-  // Output to all listeners on the topic
-  while(listener) {
-    // Handle closed connections
-    if (listener->conn->status & FNET_STATUS_CLOSED) {
-      if (listener_prev) {
-        listener_prev->next = listener->next;
-        fnet_free(listener->conn);
-        free(listener->topic);
-        free(listener);
-        listener = listener_prev->next;
-        continue;
-      } else {
-        listeners = listener->next;
-        fnet_free(listener->conn);
-        free(listener->topic);
-        free(listener);
-        listener = listeners;
-        continue;
-      }
-    }
-    // Transmit to listener
-    if (!strcmp(listener->topic, topic)) {
-      fnet_write(listener->conn, &(struct buf){
-          .data = chunk,
-          .len  = chunksize,
-          .cap  = chunksize,
-      });
-    }
-    // Continue to next listener
-    listener_prev = listener;
-    listener      = listener->next;
-  }
-
-  // And we're done with this memory
-  free(chunk);
-
-}
-
 // Generic POST topic route
-void route_post_topic(struct http_server_reqdata *reqdata, const char *topic) {
+void route_post_topic(struct http_server_reqdata *reqdata) {
   struct fnet_t              *conn          = reqdata->connection;
   struct http_parser_message *request       = reqdata->reqres->request;
   struct http_parser_message *response      = reqdata->reqres->response;
+
+  const char *topic = http_parser_meta_get(request, "param:name");
 
   jerry_post(topic, request->body);
 
@@ -327,13 +343,6 @@ void route_post_topic(struct http_server_reqdata *reqdata, const char *topic) {
   buf_clear(response_buffer);
   free(response_buffer);
   fnet_close(conn);
-}
-
-void route_get_topic_chat(struct http_server_reqdata *reqdata) {
-  return route_get_topic(reqdata, "chat");
-}
-void route_post_topic_chat(struct http_server_reqdata *reqdata) {
-  return route_post_topic(reqdata, "chat");
 }
 
 int thread_http(void *arg) {
@@ -363,8 +372,8 @@ int thread_http(void *arg) {
   http_server_route("POST", "/config"          , route_post_settings       );
   http_server_route("GET" , "/overlay/chat"    , route_get_overlay_chat    );
   http_server_route("GET" , "/overlay/shoutout", route_get_overlay_shoutout);
-  http_server_route("GET" , "/topic/chat"      , route_get_topic_chat      );
-  http_server_route("POST", "/topic/chat"      , route_post_topic_chat     );
+  http_server_route("GET" , "/topic/:name"     , route_get_topic           );
+  http_server_route("POST", "/topic/:name"     , route_post_topic          );
   http_server_main(&opts);
   printf("http server has shut down\n");
   fnet_shutdown();
