@@ -43,20 +43,39 @@
 
   <script>
 
+    function updateOauthButton() {
+      const elButton = document.getElementById('oauthButton');
+      if (!elButton) return;
+      if (!appSettings.auth) appSettings.auth = [];
+      const knownTwitchAuth = appSettings.auth.find(credentials => credentials.platform == 'twitch');
+      if (knownTwitchAuth) {
+        oauthButton.innerText = 'Disconnect';
+      } else {
+        oauthButton.innerText = 'Connect';
+      }
+    }
+
+    function updateUsernameLabel() {
+      const elLabel = document.getElementById('username');
+      if (!elLabel) return;
+      if (!appSettings.auth) appSettings.auth = [];
+      const auth = appSettings.auth.find(credentials => credentials.platform == 'twitch');
+      elLabel.innerText = auth ? (auth.user?.login || '') : '';
+    }
+
+    appSettingEffects.push(debounce(updateOauthButton));
+    appSettingEffects.push(debounce(updateUsernameLabel));
+
     window.fn = window.fn || {};
     window.fn.toggleUser = async () => {
-
-      // Ensure the auth array exists
       if (!appSettings.auth) appSettings.auth = [];
-
-      // Fetch pre-existing credentials
       const knownTwitchAuth = appSettings.auth.find(credentials => credentials.platform == 'twitch');
-      const twitchAuth      = knownTwitchAuth || {};
 
       // Disconnect
-      if (appSettings.knownTwitchAuth) {
-        appSettings.auth = appSettings.auth.filter(credentials => credentials !== knownTwitchAuth);
-        document.getElementById('oauthButton').innerText = 'Connect';
+      if (knownTwitchAuth) {
+        console.log("before: " + JSON.stringify(appSettings.auth));
+        appSettings.auth = appSettings.auth.filter(credentials => credentials.platform != 'twitch');
+        console.log("after: " + JSON.stringify(appSettings.auth));
         return;
       }
 
@@ -65,10 +84,13 @@
         client_id    : clientId,
         redirect_uri : 'http://' + document.location.host + '/oauth2/callback/twitch',
         response_type: 'token',
+        scope        : requiredScopes.join(' '),
       }));
     };
 
     ons.getScriptPage().onInit = function () {
+      updateOauthButton();
+      updateUsernameLabel();
 
       if (ons.platform.isAndroid()) {
         const inputItems = document.querySelectorAll('.input-items');
@@ -79,26 +101,18 @@
         }
       }
 
-      (async oauthButton => {
-        if (appSettings.oauthToken) {
-          oauthButton.innerText = 'Disconnect';
-        } else {
-          oauthButton.innerText = 'Connect';
-        }
-      })(document.getElementById('oauthButton'));
+      // (async usernameLabel => {
+      //   if (appSettings.oauthToken) {
+      //     usernameLabel.innerText = appSettings.username;
+      //   } else {
+      //     usernameLabel.innerText = '<not connected>';
+      //   }
 
-      (async usernameLabel => {
-        if (appSettings.oauthToken) {
-          usernameLabel.innerText = appSettings.username;
-        } else {
-          usernameLabel.innerText = '<not connected>';
-        }
-
-      //   usernameInput.value = appSettings.username;
-      //   usernameInput.addEventListener('input', function() {
-      //     appSettings.username = usernameInput.value;
-      //   });
-      })(document.getElementById('username'));
+      // //   usernameInput.value = appSettings.username;
+      // //   usernameInput.addEventListener('input', function() {
+      // //     appSettings.username = usernameInput.value;
+      // //   });
+      // })(document.getElementById('username'));
 
       (async channelInput => {
         channelInput.value = appSettings.channel;
