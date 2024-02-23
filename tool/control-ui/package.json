@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "alpinejs": "^3.13.3",
+    "@finwo/observer": "^1.0.1",
     "esbuild": "^0.19.5",
     "fast-glob": "^3.3.1",
     "lucide": "^0.312.0",

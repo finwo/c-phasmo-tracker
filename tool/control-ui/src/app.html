@@ -4,7 +4,7 @@
     <ons-toolbar>
       <div class="center">Home</div>
       <div class="right">
-        <ons-button onclick="fn.pushPage({id: 'settings.html', title: 'Settings'})" modifier="quiet" class="button-margin"><ons-icon icon="ion-ios-settings" style="font-size:1.6em;"></ons-icon></ons-button>
+        <ons-button id="settingsButton" onclick="fn.pushPage({id: 'settings.html', title: 'Settings'})" modifier="quiet" class="button-margin"><ons-icon icon="ion-ios-settings" style="font-size:1.6em;"></ons-icon></ons-button>
       </div>
     </ons-toolbar>
 
@@ -25,3 +25,35 @@
 
   </ons-page>
 </ons-navigator>
+
+<style>
+  ons-button img.profile-image {
+    height: 1.6em;
+    border-radius: 0.8em;
+  }
+</style>
+
+<script>
+  console.log('hi');
+
+  (async () => {
+    const elButton = document.getElementById('settingsButton');
+    const orgIcon  = elButton.innerHTML;
+    while(!window.appSettingEffects) await new Promise(r => setTimeout(r,100));
+
+    function updateSettingsIcon() {
+      const auth = window.appSettings.auth.find(credentials => credentials.platform == 'twitch');
+
+      if (!(auth && auth.user)) {
+        elButton.innerHTML = orgIcon;
+      } else {
+        elButton.innerHTML = `<img class="profile-image" src="${auth.user.profile_image_url}"/>`;
+      }
+
+      console.log(orgIcon);
+    }
+
+    updateSettingsIcon();
+    window.appSettingEffects.push(debounce(updateSettingsIcon));
+  })();
+</script>
