@@ -1,6 +1,11 @@
+lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(subst G,g,$(subst H,h,$(subst I,i,$(subst J,j,$(subst K,k,$(subst L,l,$(subst M,m,$(subst N,n,$(subst O,o,$(subst P,p,$(subst Q,q,$(subst R,r,$(subst S,s,$(subst T,t,$(subst U,u,$(subst V,v,$(subst W,w,$(subst X,x,$(subst Y,y,$(subst Z,z,$1))))))))))))))))))))))))))
+
 LIBS:=
 SRC:=
 BIN?=stream-companion
+
+UNAME_MACHINE=$(call lc,$(shell uname -m))
+UNAME_SYSTEM=$(call lc,$(shell uname -s))
 
 CC:=gcc
 CPP:=g++
@@ -81,7 +86,7 @@ default: $(BIN)
 
 $(OBJ): $(headertools)
 
-tool/bin2c/bin2c:
+tool/bin2c/bin2c-${UNAME_SYSTEM}-${UNAME_MACHINE}:
 	bash -c "cd tool/bin2c && make"
 
 tool/client-jerry/dist/index.js:
@@ -94,8 +99,8 @@ $(htmltools):
 	bash -c "cd $$(dirname $$(dirname $@)) && npm i && npm run build"
 
 headertools: $(headertools)
-$(headertools): tool/bin2c/bin2c $(htmltools)
-	tool/bin2c/bin2c < $(@:.h=.html) > $@
+$(headertools): tool/bin2c/bin2c-${UNAME_SYSTEM}-${UNAME_MACHINE} $(htmltools)
+	tool/bin2c/bin2c-${UNAME_SYSTEM}-${UNAME_MACHINE} < $(@:.h=.html) > $@
 
 .cc.o:
 	$(CPP) $< $(CPPFLAGS) -c -o $@
@@ -128,4 +133,4 @@ clean:
 	rm -rf tool/oauth2-callback/dist
 	rm -rf tool/overlay-chat/dist
 	rm -rf tool/overlay-shoutout/dist
-	rm -rf tool/bin2c/bin2c
+	rm -rf tool/bin2c/bin2c-${UNAME_SYSTEM}-${UNAME_MACHINE}
