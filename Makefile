@@ -128,9 +128,17 @@ watch:
 clean:
 	rm -rf $(BIN)
 	rm -rf $(OBJ)
-	rm -rf tool/conrol-ui/dist
 	rm -rf tool/client-jerry/dist
+	rm -rf tool/conrol-ui/dist
 	rm -rf tool/oauth2-callback/dist
 	rm -rf tool/overlay-chat/dist
 	rm -rf tool/overlay-shoutout/dist
 	rm -rf tool/bin2c/bin2c-${UNAME_SYSTEM}-${UNAME_MACHINE}
+
+.PHONY: sterile
+sterile: clean
+	rm -rf tool/client-jerry/node_modules
+	rm -rf tool/conrol-ui/node_modules
+	rm -rf tool/oauth2-callback/node_modules
+	rm -rf tool/overlay-chat/node_modules
+	rm -rf tool/overlay-shoutout/node_modules
