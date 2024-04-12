@@ -1,5 +1,11 @@
+import "@fontsource/nunito/400.css";
+
 import m from "mithril";
-m.render(document.body, "hello world");
+
+m.route(document.body, "/root", {
+  "/root"    : require('./page/root.ts'),
+  "/settings": require('./page/settings.ts'),
+});
 
 // import 'onsenui/css/onsenui.css';
 // import 'onsenui/css/onsen-css-components.css';
