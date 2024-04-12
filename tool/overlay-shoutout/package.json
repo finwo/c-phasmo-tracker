@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "node esbuild.mjs",
-    "watch": "npm run build ; bash watch.sh"
+    "watch": "nodemon --watch src/ -e css,ts --exec npm -- run build"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +14,8 @@
     "buffer": "^6.0.3",
     "esbuild": "^0.19.5",
     "fast-glob": "^3.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }
