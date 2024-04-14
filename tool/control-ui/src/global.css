@@ -1,3 +1,17 @@
+:root {
+  font-family: 'Nunito', sans-serif;
+  line-height: 1.5;
+  --fg-primary: #222;
+  --bg-primary: #FFF;
+  --fg-secondary: #FFF;
+  --bg-secondary: #222;
+  --anchor-primary: #26A;
+  --anchor-primary-visited: #A2A;
+  --anchor-secondary: #6AF;
+  --anchor-secondary-visited: #F6F;
+  --transition-speed: 200ms;
+}
+
 /* Reset, source: https://www.joshwcomeau.com/css/custom-css-reset/ */
 
 *, *::before, *::after {
@@ -26,18 +40,25 @@ p, h1, h2, h3, h4, h5, h6 {
 
 /* Actual styling */
 
-html,body {
-  font-family: 'Nunito', sans-serif;
+* {
+  font-family: inherit;
 }
 p, h1, h2, h3, h4, h5, h6 {
   font-weight: 400;
 }
 
-.toolbar {
-  margin-bottom: 0.5em;
-  padding: 0.5em;
-  box-shadow: 0 1px 2px #0008;
+main {
+  max-width: 60rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1rem;
 }
+
+/* .toolbar { */
+/*   margin-bottom: 0.5em; */
+/*   padding: 0.5em; */
+/*   box-shadow: 0 1px 2px #0008; */
+/* } */
 
 /* .card__title, */
 /* .card--material__title { */

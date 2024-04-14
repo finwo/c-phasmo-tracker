@@ -77,6 +77,8 @@ esbuild
     ${styles.map(path => `<style type="text/css">${fs.readFileSync(`${config.outdir}/${path}`,'utf-8')}</style>`).join('\n    ')}
   </head>
   <body>
+    <nav id=nav></nav>
+    <main id=content></main>
     ${buildList.map(path => `<script type="text/javascript">${fs.readFileSync(`${config.outdir}/${path}`,'utf-8')}</script>`).join('\n    ')}
   </body>
 </html>

@@ -1,11 +1,13 @@
 import m from 'mithril';
 import { htmlFor } from '../lib/html-for';
-import { createElement, User, Video } from 'lucide';
+import { createElement, Settings, User, Video } from 'lucide';
 
 const elUser  = htmlFor(createElement(User ));
 const elVideo = htmlFor(createElement(Video));
 
 module.exports = {
+  icon: Settings,
+  label: 'Settings',
   view() {
     console.log({ elVideo });
     return m('div', [

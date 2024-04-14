@@ -1,11 +1,51 @@
 import "@fontsource/nunito/400.css";
 
-import m from "mithril";
+import m   from "mithril";
+import Nav from './component/nav';
 
-m.route(document.body, "/root", {
-  "/root"    : require('./page/root.ts'),
-  "/settings": require('./page/settings.ts'),
-});
+const routes = {};
+
+routes['/'        ] = require('./page/root');
+routes['/settings'] = require('./page/settings');
+
+m.mount(document.getElementById('nav'), Nav(routes));
+m.route(document.getElementById('content'), "/", routes);
+
+    // return
+    // return m('ul', [
+    //   // m('li', m(m.route.Link, { href: '/settings'               }, 'Settings'              )),
+    //   // m('li', m(m.route.Link, { href: '/chat/settings'          }, 'Chat settings'         )),
+    //   // m('li', m(m.route.Link, { href: '/commands/settings'      }, 'Commands'              )),
+    //   // m('li', m(m.route.Link, { href: '/auto-shoutout/settings' }, 'Auto shoutout settings')),
+    // ]);
+  // },
+
+    // <ons-card onclick="fn.pushPage({id: 'settings/overlay-chat.html', title: 'Chat settings'})">
+    //   <div class="title">Chat settings</div>
+    //   <div class="content">Open up settings for the chat overlay</div>
+    // </ons-card>
+
+    // <ons-card onclick="fn.pushPage({'id': 'settings/commands.html', 'title': 'Commands'})">
+    //   <div class="title">Commands</div>
+    //   <div class="content">Control which commands are enabled</div>
+    // </ons-card>
+
+    // <ons-card onclick="fn.pushPage({'id': 'settings/auto-shoutout.html', 'title': 'Auto shoutout'})">
+    //   <div class="title">Auto shoutout settings</div>
+    //   <div class="content">Open up settings for the auto-shoutout feature</div>
+    // </ons-card>
+
+
+
+
+
+
+
+
+
+
+// console.log(module.exports.view()[0].view());
+
 
 // import 'onsenui/css/onsenui.css';
 // import 'onsenui/css/onsen-css-components.css';
